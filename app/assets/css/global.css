@@ -1,0 +1,12 @@
+/* 全局样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Nuxt 应用根元素 */
+#__nuxt,
+#__layout {
+  height: 100%;
+  overflow: hidden;
+}

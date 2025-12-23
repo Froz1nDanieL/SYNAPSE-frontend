@@ -1,0 +1,29 @@
+{
+  "name": "MS-EN-frontend",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "openapi": "node openapi.config.js",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/icon": "^2.1.0",
+    "@nuxt/ui": "^4.2.1",
+    "@pinia/nuxt": "^0.11.3",
+    "ant-design-vue": "^4.2.6",
+    "axios": "^1.13.2",
+    "echarts": "^6.0.0",
+    "nuxt": "^4.2.1",
+    "ofetch": "^1.5.1",
+    "pnpm": "^10.25.0",
+    "vue": "^3.5.25",
+    "vue-router": "^4.6.3"
+  },
+  "devDependencies": {
+    "@umijs/openapi": "^1.14.1"
+  }
+}
