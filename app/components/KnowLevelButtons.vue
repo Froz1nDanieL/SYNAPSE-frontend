@@ -10,9 +10,9 @@
 .level-button {
   flex: 1;
   padding: 1rem 1rem;
-  border: 2px solid #e9ecef;
+  border: 2px solid #495057;
   border-radius: 8px;
-  background-color: white;
+  background: none;
   color: #495057;
   font-size: 1rem;
   font-weight: 500;
@@ -29,7 +29,6 @@
 }
 
 .level-button.active {
-  background-color: #000066;
   border-color: #000066;
   color: white;
   font-weight: 600;
@@ -37,7 +36,6 @@
 
 .level-button.active:hover {
   background-color: #000066dd;
-  border-color: #000066dd;
 }
 </style>
 

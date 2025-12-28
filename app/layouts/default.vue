@@ -1,16 +1,13 @@
 <template>
   <div class="layout-container">
     <Sidebar />
-    
     <main class="main-content">
       <slot />
     </main>
   </div>
 </template>
 
-<script setup>
-import Sidebar from '~/components/Sidebar.vue'
-</script>
+<script setup></script>
 
 <style scoped>
 .layout-container {

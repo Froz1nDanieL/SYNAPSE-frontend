@@ -125,9 +125,7 @@ import {
 import { useRouter } from "vue-router";
 import { navigateTo } from "nuxt/app";
 import { ref, computed, onMounted } from "vue";
-import WordCard1 from "~/components/WordCard1.vue";
 
-import WordCardQuiz from "~/components/WordCardQuiz.vue";
 import { getCurrentPlan } from "~/composables/api/learnPlanController";
 
 const router = useRouter();

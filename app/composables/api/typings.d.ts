@@ -1,4 +1,56 @@
 declare namespace API {
+  type ArticleAddRequest = {
+    title?: string;
+    content?: string;
+    difficulty?: number;
+    category?: string;
+    wordCount?: number;
+    source?: string;
+    publishTime?: string;
+  };
+
+  type ArticleQueryRequest = {
+    current?: number;
+    pageSize?: number;
+    sortField?: string;
+    sortOrder?: string;
+    id?: number;
+    title?: string;
+    difficulty?: number;
+    category?: string;
+  };
+
+  type ArticleUpdateRequest = {
+    id?: number;
+    title?: string;
+    content?: string;
+    difficulty?: number;
+    category?: string;
+    wordCount?: number;
+    source?: string;
+    publishTime?: string;
+  };
+
+  type ArticleVO = {
+    id?: number;
+    title?: string;
+    content?: string;
+    difficulty?: number;
+    category?: string;
+    wordCount?: number;
+    readCount?: number;
+    source?: string;
+    publishTime?: string;
+    createTime?: string;
+    updateTime?: string;
+  };
+
+  type BaseResponseArticleVO = {
+    code?: number;
+    data?: ArticleVO;
+    message?: string;
+  };
+
   type BaseResponseBoolean = {
     code?: number;
     data?: boolean;
@@ -71,6 +123,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponsePageArticleVO = {
+    code?: number;
+    data?: PageArticleVO;
+    message?: string;
+  };
+
   type BaseResponsePageEngdict = {
     code?: number;
     data?: PageEngdict;
@@ -107,6 +165,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseWordCardVO = {
+    code?: number;
+    data?: WordCardVO;
+    message?: string;
+  };
+
   type BatchWordLearnRequest = {
     wordType?: string;
     learnRecords?: WordLearnRequest[];
@@ -118,6 +182,14 @@ declare namespace API {
 
   type DeleteRequest = {
     id?: number;
+  };
+
+  type EmailRegisterRequest = {
+    userEmail: string;
+    emailCode: string;
+    userAccount: string;
+    userPassword: string;
+    checkPassword: string;
   };
 
   type Engdict = {
@@ -197,6 +269,10 @@ declare namespace API {
     comparative?: string;
     superlative?: string;
     lemma?: string;
+  };
+
+  type getArticleByIdParams = {
+    id: number;
   };
 
   type getCollectedWordsParams = {
@@ -291,6 +367,20 @@ declare namespace API {
     asc?: boolean;
   };
 
+  type PageArticleVO = {
+    records?: ArticleVO[];
+    total?: number;
+    size?: number;
+    current?: number;
+    orders?: OrderItem[];
+    optimizeCountSql?: PageArticleVO;
+    searchCount?: PageArticleVO;
+    optimizeJoinOfCountSql?: boolean;
+    maxLimit?: number;
+    countId?: string;
+    pages?: number;
+  };
+
   type PageEngdict = {
     records?: Engdict[];
     total?: number;
@@ -338,8 +428,23 @@ declare namespace API {
     limit?: number;
   };
 
+  type ResetPasswordRequest = {
+    userEmail: string;
+    emailCode: string;
+    newPassword: string;
+    checkPassword: string;
+  };
+
+  type SendCodeRequest = {
+    userEmail: string;
+  };
+
   type switchWordBookParams = {
     wordType: string;
+  };
+
+  type translateWordParams = {
+    word: string;
   };
 
   type updateDailyCountParams = {

@@ -47,6 +47,66 @@ export async function editUser(
   });
 }
 
+/** 此处后端没有提供注释 POST /user/email/register */
+export async function emailRegister(
+  body: API.EmailRegisterRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseLong>("/user/email/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 POST /user/email/register/code */
+export async function sendRegisterCode(
+  body: API.SendCodeRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean>("/user/email/register/code", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 POST /user/email/reset/code */
+export async function sendResetPasswordCode(
+  body: API.SendCodeRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean>("/user/email/reset/code", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 POST /user/email/reset/password */
+export async function resetPassword(
+  body: API.ResetPasswordRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean>("/user/email/reset/password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 GET /user/get */
 export async function getUserById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

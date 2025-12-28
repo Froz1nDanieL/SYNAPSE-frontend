@@ -77,6 +77,21 @@ export async function listEngdictByPage(
   });
 }
 
+/** 此处后端没有提供注释 GET /engdict/translateWord */
+export async function translateWord(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.translateWordParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseWordCardVO>("/engdict/translateWord", {
+    method: "GET",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 POST /engdict/update */
 export async function updateEngdict(
   body: API.EngdictUpdateRequest,
