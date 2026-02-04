@@ -16,15 +16,6 @@
     <!-- 页面头部 -->
     <header class="newsroom-header">
       <h1 class="newsroom-title">精选文章</h1>
-      <div class="category-tabs">
-        <button
-          v-for="category in categories"
-          :key="category.id"
-          :class="['category-tab', { active: category.active }]"
-        >
-          {{ category.name }}
-        </button>
-      </div>
     </header>
 
     <!-- 文章网格 -->
@@ -50,52 +41,6 @@
     <div class="show-more-container">
       <ShowMore />
     </div>
-
-    <!-- 页脚 -->
-    <footer class="newsroom-footer">
-      <div class="stay-connected">
-        <h3>Stay connected to the future of LimeQ3</h3>
-        <button class="subscribe-button">Subscribe</button>
-      </div>
-      <div class="footer-links">
-        <div class="footer-column">
-          <h4>Company</h4>
-          <ul>
-            <li>About Us</li>
-            <li>Newsroom</li>
-            <li>Careers</li>
-            <li>Contact</li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h4>Products</h4>
-          <ul>
-            <li>The Q</li>
-            <li>KCP</li>
-            <li>Insurance Data Station</li>
-            <li>Global Jurisdiction</li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h4>Resources</h4>
-          <ul>
-            <li>White Papers</li>
-            <li>Case Studies</li>
-            <li>Blog</li>
-            <li>Support</li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h4>Legal</h4>
-          <ul>
-            <li>Privacy Policy</li>
-            <li>Terms of Service</li>
-            <li>Cookies</li>
-            <li>Security</li>
-          </ul>
-        </div>
-      </div>
-    </footer>
   </div>
 </template>
 
@@ -220,37 +165,11 @@ function goToArticle(articleId) {
 </script>
 
 <style scoped>
-/* 全局样式 */
-:root {
-  --primary-color: #000000;
-  --secondary-color: #666666;
-  --accent-color: #000076;
-  --bg-color: #ffffff;
-  --border-color: #e0e0e0;
-  --hover-opacity: 0.9;
-  --transition-speed: 0.2s;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, sans-serif;
-  line-height: 1.6;
-  color: var(--primary-color);
-  background-color: var(--bg-color);
-}
-
 /* 新闻编辑室容器 */
 .newsroom-container {
   max-width: 1200px;
   margin: 2rem auto;
   padding: 2rem;
-  border: 1px solid var(--border-color);
 }
 
 /* 页面头部 */
@@ -263,60 +182,12 @@ body {
   font-weight: 300;
   margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
-  color: var(--primary-color);
-}
-
-.category-tabs {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid var(--border-color);
-  padding-bottom: 1rem;
-}
-
-.category-tab {
-  background: none;
-  border: 1px solid transparent;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 400;
-  color: var(--secondary-color);
-  cursor: pointer;
-  transition: all var(--transition-speed) ease;
-  position: relative;
-}
-
-.category-tab::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 100%;
-  height: 2px;
-  background-color: var(--accent-color);
-  transform: scaleX(0);
-  transition: transform var(--transition-speed) ease;
-}
-
-.category-tab.active {
-  color: var(--primary-color);
-  border-color: var(--border-color);
-  font-weight: 500;
-}
-
-.category-tab.active::after {
-  transform: scaleX(1);
-}
-
-.category-tab:hover {
-  color: var(--primary-color);
+  color: var(--color-text-primary);
 }
 
 /* 每日一句独立板块 */
 .daily-quote-section {
-  background-color: var(--bg-color);
   padding: 3rem 0;
-  border-bottom: 1px solid var(--border-color);
   margin-bottom: 2rem;
 }
 
@@ -330,19 +201,9 @@ body {
   font-size: 1.8rem;
   font-weight: 400;
   margin-bottom: 1.5rem;
-  color: var(--primary-color);
   position: relative;
   padding-bottom: 0.5rem;
-}
-
-.quote-section-title::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 60px;
-  height: 2px;
-  background-color: var(--accent-color);
+  color: var(--color-text-primary);
 }
 
 .quote-content {
@@ -350,43 +211,32 @@ body {
   flex-direction: column;
   gap: 1rem;
   padding: 2rem;
-  border: 1px solid var(--border-color);
   position: relative;
   overflow: hidden;
-}
-
-.quote-content::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 3px;
-  background-color: var(--accent-color);
 }
 
 .quote-text {
   font-size: 1.3rem;
   font-weight: 400;
   line-height: 1.6;
-  color: var(--primary-color);
   font-style: italic;
   padding-left: 1rem;
+  color: var(--color-text-primary);
 }
 
 .quote-translation {
   font-size: 1.1rem;
-  color: var(--secondary-color);
   line-height: 1.5;
   padding-left: 1rem;
+  color: var(--color-text-primary);
 }
 
 .quote-author {
   font-size: 0.9rem;
-  color: var(--secondary-color);
   align-self: flex-end;
   margin-top: 0.5rem;
   padding-right: 1rem;
+  color: var(--color-text-primary);
 }
 
 /* 文章网格 */
@@ -399,13 +249,12 @@ body {
 
 .article-card {
   cursor: pointer;
-  transition: all var(--transition-speed) ease;
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  border: 1px solid var(--border-color);
   position: relative;
   overflow: hidden;
+  background-color: var(--color-bg-primary);
 }
 
 .article-card::before {
@@ -415,13 +264,10 @@ body {
   top: 0;
   height: 100%;
   width: 3px;
-  background-color: var(--accent-color);
   transform: scaleY(0);
-  transition: transform var(--transition-speed) ease;
 }
 
 .article-card:hover {
-  opacity: var(--hover-opacity);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
@@ -443,28 +289,28 @@ body {
   font-weight: 700;
   font-family: "Times New Roman", Times, serif;
   line-height: 1.4;
-  color: var(--primary-color);
   margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
 }
 
 .article-summary {
   font-size: 0.9rem;
-  color: var(--secondary-color);
   line-height: 1.5;
   margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
 }
 
 .article-meta {
   display: flex;
   gap: 1rem;
   font-size: 0.8rem;
-  color: var(--secondary-color);
   font-weight: 300;
   position: absolute;
   bottom: 1.5rem;
   left: 1.5rem;
   border-top: none;
   padding-top: 0;
+  color: var(--color-text-primary);
 }
 
 /* 查看更多按钮容器 */
@@ -473,82 +319,6 @@ body {
   justify-content: center;
   margin: 3rem 0;
   padding: 1rem 0;
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
-}
-
-/* 移除不再使用的分页按钮样式 */
-
-/* 页脚 */
-.newsroom-footer {
-  border-top: 1px solid var(--border-color);
-  padding-top: 3rem;
-  margin-top: 2rem;
-}
-
-.stay-connected {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.stay-connected h3 {
-  font-size: 1.2rem;
-  font-weight: 400;
-  color: var(--primary-color);
-}
-
-.subscribe-button {
-  background-color: var(--primary-color);
-  color: var(--bg-color);
-  border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: opacity var(--transition-speed) ease;
-}
-
-.subscribe-button:hover {
-  opacity: var(--hover-opacity);
-}
-
-.footer-links {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-}
-
-.footer-column h4 {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--primary-color);
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.footer-column ul {
-  list-style: none;
-}
-
-.footer-column li {
-  margin-bottom: 0.5rem;
-}
-
-.footer-column li a,
-.footer-column li {
-  font-size: 0.85rem;
-  color: var(--secondary-color);
-  text-decoration: none;
-  transition: color var(--transition-speed) ease;
-}
-
-.footer-column li a:hover,
-.footer-column li:hover {
-  color: var(--primary-color);
 }
 
 /* 响应式设计 */

@@ -7,6 +7,7 @@ import * as userController from "./userController";
 import * as learnPlanController from "./learnPlanController";
 import * as engdictController from "./engdictController";
 import * as articleController from "./articleController";
+import * as translateController from "./translateController";
 import * as testController from "./testController";
 export default {
   wordLearnController,
@@ -14,5 +15,6 @@ export default {
   learnPlanController,
   engdictController,
   articleController,
+  translateController,
   testController,
 };

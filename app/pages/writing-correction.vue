@@ -24,6 +24,6 @@ useHead({
 <style scoped>
 .container {
   padding: 2rem;
-  background-color: #f9f8f5;
+  background-color: var(--color-bg-primary);
 }
 </style>

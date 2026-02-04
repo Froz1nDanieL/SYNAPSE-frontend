@@ -4,9 +4,20 @@
   padding: 0;
 }
 
+/* 全局颜色变量定义 */
+:root {
+  --color-bg-primary: #f1efe9;
+  --color-text-primary: #282828;
+  --color-accent-secondary: #e2ded1;
+}
+
 /* Nuxt 应用根元素 */
 #__nuxt,
 #__layout {
   height: 100%;
   overflow: hidden;
+}
+
+body {
+  background-color: var(--color-bg-primary);
 }

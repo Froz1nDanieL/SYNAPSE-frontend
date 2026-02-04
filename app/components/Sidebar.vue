@@ -6,7 +6,7 @@
       <div class="sidebar-header">
         <!-- Logo 占位符 -->
         <div class="sidebar-logo">
-          <div class="logo-placeholder"></div>
+          <img src="~/assets/img/logo.png" alt="Logo" class="logo-image" />
         </div>
 
         <!-- 切换按钮 -->
@@ -23,9 +23,7 @@
       <nav class="sidebar-nav">
         <ul>
           <li class="nav-item">
-            <NuxtLink to="/word/word-memory" class="nav-link"
-              >单词记忆</NuxtLink
-            >
+            <NuxtLink to="/word/word-main" class="nav-link">单词记忆</NuxtLink>
           </li>
           <li class="nav-item">
             <NuxtLink to="/article/article-main" class="nav-link"
@@ -33,7 +31,9 @@
             >
           </li>
           <li class="nav-item">
-            <NuxtLink to="/translation" class="nav-link">翻译页面</NuxtLink>
+            <NuxtLink to="/translation/translation-text" class="nav-link"
+              >翻译页面</NuxtLink
+            >
           </li>
           <li class="nav-item">
             <NuxtLink to="/writing-correction" class="nav-link"
@@ -149,11 +149,10 @@ function handleUserIconClick() {
   justify-content: center;
 }
 
-.logo-placeholder {
-  width: 36px;
-  height: 36px;
-  background-color: #e6d9c3;
-  border-radius: 12px;
+.logo-image {
+  margin-left: 0.5rem;
+  width: 2rem;
+  object-fit: contain;
 }
 
 /* 导航菜单 */
@@ -186,7 +185,7 @@ function handleUserIconClick() {
 .nav-link {
   display: block;
   padding: 10px 15px;
-  color: #333;
+  color: var(--color-text-primary);
   text-decoration: none;
   border-radius: 10px;
   transition: all 0.2s ease;
@@ -195,7 +194,7 @@ function handleUserIconClick() {
 }
 
 .nav-link:hover {
-  background-color: #e6d9c3;
+  background-color: var(--color-accent-secondary);
   transform: translateX(5px);
 }
 
@@ -311,7 +310,7 @@ function handleUserIconClick() {
     height: auto;
   }
 
-  .logo-placeholder {
+  .logo-image {
     width: 28px;
     height: 28px;
   }

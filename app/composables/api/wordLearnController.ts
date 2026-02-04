@@ -36,6 +36,21 @@ export async function getCollectedWords(
   });
 }
 
+/** 此处后端没有提供注释 DELETE /word-learn/collected/clear */
+export async function clearCollectedWords(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.clearCollectedWordsParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseInteger>("/word-learn/collected/clear", {
+    method: "DELETE",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 POST /word-learn/learn */
 export async function submitLearnRecord(
   body: API.WordLearnRequest,
@@ -111,6 +126,23 @@ export async function getLearnProgress(
   return request<API.BaseResponseLearnProgressVO>("/word-learn/progress", {
     method: "GET",
     params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 GET /word-learn/pronunciation */
+export async function getWordPronunciation(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getWordPronunciationParams,
+  options?: { [key: string]: any }
+) {
+  return request<any>("/word-learn/pronunciation", {
+    method: "GET",
+    params: {
+      // type has a default value: 1
+      type: "1",
       ...params,
     },
     ...(options || {}),

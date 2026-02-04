@@ -153,6 +153,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseTranslateResponse = {
+    code?: number;
+    data?: TranslateResponse;
+    message?: string;
+  };
+
   type BaseResponseUser = {
     code?: number;
     data?: User;
@@ -178,6 +184,10 @@ declare namespace API {
 
   type BatchWordReviewRequest = {
     reviewRecords?: WordReviewRequest[];
+  };
+
+  type clearCollectedWordsParams = {
+    wordType?: string;
   };
 
   type DeleteRequest = {
@@ -305,6 +315,11 @@ declare namespace API {
 
   type getUserVOByIdParams = {
     id: number;
+  };
+
+  type getWordPronunciationParams = {
+    word: string;
+    type?: number;
   };
 
   type LearnPlanCreateRequest = {
@@ -443,8 +458,35 @@ declare namespace API {
     wordType: string;
   };
 
+  type TranslateResponse = {
+    from?: string;
+    to?: string;
+    error_code?: number;
+    error_msg?: string;
+    trans_result?: TransResult[];
+  };
+
+  type translateTextParams = {
+    text: string;
+    from?: string;
+    to?: string;
+  };
+
+  type translateToChineseParams = {
+    text: string;
+  };
+
+  type translateToEnglishParams = {
+    text: string;
+  };
+
   type translateWordParams = {
     word: string;
+  };
+
+  type TransResult = {
+    src?: string;
+    dst?: string;
   };
 
   type updateDailyCountParams = {

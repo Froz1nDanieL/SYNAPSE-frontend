@@ -31,11 +31,11 @@
         </div>
         <div class="hero-actions">
           <div class="action-primary">
-            <GoToButtom title="背单词" to="/word/word-memory" />
+            <GoToButtom title="单词记忆" to="/word/word-main" />
             <GoToButtom title="文章阅读" to="/article/article-main" />
           </div>
           <div class="action-secondary">
-            <GoToButtom title="英汉互译" to="/translation" />
+            <GoToButtom title="英汉互译" to="/translation/translation-text" />
             <GoToButtom title="写作批改" to="/writing-correction" />
           </div>
         </div>
@@ -48,30 +48,46 @@
 
     <section class="features">
       <div class="feature-section word-memory">
-        <div class="feature-container">
-          <div class="feature-content">
-            <div class="feature-visual">
-              <span class="feature-tag">科学记忆</span>
-              <h2 class="feature-title">背单词</h2>
-              <p class="feature-description">
-                个性化定制单词复习计划，确保每个单词都能牢牢记住。通过科学的记忆方法，让背单词不再是痛苦的经历。
+        <div class="word-memory-container">
+          <div class="word-memory-background">
+            <div class="floating-word floating-word--1">vocabulary</div>
+            <div class="floating-word floating-word--2">memory</div>
+            <div class="floating-word floating-word--3">learn</div>
+            <div class="floating-word floating-word--4">practice</div>
+            <div class="floating-word floating-word--5">recall</div>
+            <div class="floating-word floating-word--6">master</div>
+            <div class="floating-word floating-word--7">review</div>
+            <div class="floating-word floating-word--8">study</div>
+          </div>
+
+          <div class="word-memory-content">
+            <div class="word-memory-header">
+              <h2 class="word-memory-title">单词记忆</h2>
+              <p class="word-memory-subtitle">
+                个性化定制单词复习计划，确保每个单词都能牢牢记住
               </p>
-              <ul class="feature-list">
-                <li>个性化词库推荐，贴合你的学习目标</li>
-                <li>多种记忆模式，适应不同学习习惯</li>
-              </ul>
-              <div class="feature-stats">
-                <div class="stat-item">
-                  <span class="stat-number">95%</span>
-                  <span class="stat-label">记忆保持率</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-number">3x</span>
-                  <span class="stat-label">学习效率</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-number">10000+</span>
-                  <span class="stat-label">词库容量</span>
+            </div>
+
+            <div class="word-memory-grid">
+              <div
+                v-for="(card, index) in cards"
+                :key="card.id"
+                class="word-memory-card"
+                :class="{
+                  'card-expanded': expandedCard === card.id,
+                  'card-hidden':
+                    expandedCard !== null && expandedCard !== card.id,
+                }"
+                @click="toggleCard(card.id)"
+              >
+                <component :is="card.icon" class="card-icon" />
+                <h3 class="card-title">{{ card.title }}</h3>
+                <p class="card-desc">{{ card.desc }}</p>
+                <div v-if="expandedCard === card.id" class="card-demo-content">
+                  <div class="demo-placeholder">
+                    <p class="demo-text">演示内容区域</p>
+                    <p class="demo-subtext">此处可接入对应功能的演示内容</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -147,6 +163,12 @@
 
 <script setup>
 import { useLoginUserStore } from "~/stores/userLoginUserStore";
+import {
+  BookOutlined,
+  AimOutlined,
+  ThunderboltOutlined,
+  BarChartOutlined,
+} from "@ant-design/icons-vue";
 
 definePageMeta({
   layout: false,
@@ -166,12 +188,29 @@ function goToLogin() {
     router.push("/user/login");
   }
 }
+
+const expandedCard = ref(null);
+
+const cards = [
+  { id: 0, title: "个性化词库", desc: "贴合你的学习目标", icon: BookOutlined },
+  { id: 1, title: "多种模式", desc: "适应不同学习习惯", icon: AimOutlined },
+  { id: 2, title: "趣味游戏", desc: "轻松学习体验", icon: ThunderboltOutlined },
+  { id: 3, title: "进度追踪", desc: "实时学习数据", icon: BarChartOutlined },
+];
+
+function toggleCard(cardId) {
+  if (expandedCard.value === cardId) {
+    expandedCard.value = null;
+  } else {
+    expandedCard.value = cardId;
+  }
+}
 </script>
 
 <style scoped>
 .container {
   min-height: 100vh;
-  background-color: #f1efe9;
+  background-color: var(--color-bg-primary);
   overflow-x: hidden;
 }
 
@@ -197,7 +236,7 @@ function goToLogin() {
 .nav-logo {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #282828;
+  color: var(--color-text-primary);
   letter-spacing: 2px;
 }
 
@@ -238,7 +277,7 @@ function goToLogin() {
 .decoration-circle--1 {
   width: 600px;
   height: 600px;
-  background: #282828;
+  background: var(--color-text-primary);
   top: -200px;
   right: -150px;
   animation: float 20s ease-in-out infinite;
@@ -247,7 +286,7 @@ function goToLogin() {
 .decoration-circle--2 {
   width: 400px;
   height: 400px;
-  background: #282828;
+  background: var(--color-text-primary);
   bottom: -100px;
   left: -100px;
   animation: float 15s ease-in-out infinite reverse;
@@ -256,7 +295,7 @@ function goToLogin() {
 .decoration-circle--3 {
   width: 250px;
   height: 250px;
-  background: #282828;
+  background: var(--color-text-primary);
   top: 50%;
   left: 10%;
   animation: float 12s ease-in-out infinite 2s;
@@ -278,7 +317,7 @@ function goToLogin() {
   font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 4px;
-  color: #282828;
+  color: var(--color-text-primary);
   opacity: 0.6;
   margin-bottom: 1.5rem;
   text-transform: uppercase;
@@ -288,7 +327,7 @@ function goToLogin() {
   font-size: clamp(4rem, 12vw, 10rem);
   font-weight: 900;
   margin-bottom: 1.5rem;
-  color: #282828;
+  color: var(--color-text-primary);
   letter-spacing: -0.02em;
   line-height: 0.95;
   display: flex;
@@ -303,12 +342,12 @@ function goToLogin() {
 }
 
 .title-line--accent {
-  color: #282828;
+  color: var(--color-text-primary);
 }
 
 .hero-subtitle {
   font-size: clamp(1.25rem, 3vw, 2rem);
-  color: #282828;
+  color: var(--color-text-primary);
   margin-bottom: 0;
   font-weight: 300;
   opacity: 0.7;
@@ -347,7 +386,7 @@ function goToLogin() {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 2px;
-  color: #282828;
+  color: var(--color-text-primary);
   opacity: 0.5;
   text-transform: uppercase;
 }
@@ -355,7 +394,11 @@ function goToLogin() {
 .scroll-line {
   width: 1px;
   height: 60px;
-  background: linear-gradient(to bottom, #282828, transparent);
+  background: linear-gradient(
+    to bottom,
+    var(--color-text-primary),
+    transparent
+  );
   animation: scrollDown 2s ease-in-out infinite;
 }
 
@@ -405,6 +448,9 @@ function goToLogin() {
 
 .features {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .feature-section {
@@ -415,8 +461,252 @@ function goToLogin() {
   align-items: center;
 }
 
+.feature-section.word-memory {
+  background-color: var(--color-bg-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.word-memory-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.word-memory-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floating-word {
+  position: absolute;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  opacity: 0.15;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+}
+
+.floating-word--1 {
+  top: 10%;
+  left: 5%;
+  animation: floatWord 8s ease-in-out infinite;
+}
+
+.floating-word--2 {
+  top: 20%;
+  right: 8%;
+  animation: floatWord 10s ease-in-out infinite 1s;
+}
+
+.floating-word--3 {
+  top: 40%;
+  left: 3%;
+  animation: floatWord 12s ease-in-out infinite 2s;
+}
+
+.floating-word--4 {
+  top: 60%;
+  right: 5%;
+  animation: floatWord 9s ease-in-out infinite 0.5s;
+}
+
+.floating-word--5 {
+  top: 75%;
+  left: 8%;
+  animation: floatWord 11s ease-in-out infinite 1.5s;
+}
+
+.floating-word--6 {
+  top: 15%;
+  left: 50%;
+  animation: floatWord 13s ease-in-out infinite 3s;
+}
+
+.floating-word--7 {
+  top: 50%;
+  right: 15%;
+  animation: floatWord 7s ease-in-out infinite 2.5s;
+}
+
+.floating-word--8 {
+  top: 85%;
+  right: 10%;
+  animation: floatWord 14s ease-in-out infinite 0.8s;
+}
+
+@keyframes floatWord {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-30px);
+  }
+}
+
+.word-memory-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rem;
+  padding: 4rem 2rem;
+}
+
+.word-memory-header {
+  text-align: center;
+  max-width: 800px;
+}
+
+.word-memory-title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+  margin: 0 0 1.5rem 0;
+  letter-spacing: -0.02em;
+}
+
+.word-memory-subtitle {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  opacity: 0.8;
+  margin: 0;
+}
+
+.word-memory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+  width: 100%;
+  max-width: 900px;
+  position: relative;
+}
+
+.word-memory-card {
+  background-color: var(--color-bg-primary);
+  padding: 3.5rem 2.5rem;
+  border-radius: 20px;
+  text-align: center;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+}
+
+.word-memory-card:hover {
+  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+}
+
+.word-memory-card.card-expanded {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  z-index: 100;
+  padding: 4rem 3rem;
+  cursor: pointer;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.word-memory-card.card-hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.card-icon {
+  font-size: 4rem;
+  color: var(--color-text-primary);
+  opacity: 0.8;
+  margin-bottom: 2rem;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.word-memory-card:hover .card-icon {
+  transform: scale(1.15);
+  opacity: 1;
+}
+
+.word-memory-card.card-expanded .card-icon {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+.card-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
+
+.word-memory-card.card-expanded .card-title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.card-desc {
+  font-size: 1.125rem;
+  color: var(--color-text-primary);
+  opacity: 0.7;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.word-memory-card.card-expanded .card-desc {
+  font-size: 1.25rem;
+  margin-bottom: 3rem;
+}
+
+.card-demo-content {
+  margin-top: 2rem;
+  animation: fadeInUp 0.5s ease-out 0.3s both;
+}
+
+.demo-placeholder {
+  background-color: var(--color-accent-secondary);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.demo-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.demo-subtext {
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  opacity: 0.7;
+  margin: 0;
+}
+
 .feature-section:nth-child(even) {
-  background-color: #f1efe9;
+  background-color: var(--color-bg-primary);
 }
 
 .feature-container {
@@ -453,20 +743,20 @@ function goToLogin() {
 .placeholder-image {
   width: 100%;
   height: 400px;
-  background-color: #e2ded1;
+  background-color: var(--color-accent-secondary);
   border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #282828;
+  color: var(--color-text-primary);
   font-size: 1.25rem;
   font-weight: 500;
 }
 
 .feature-tag {
   display: inline-block;
-  background-color: #e2ded1;
-  color: #282828;
+  background-color: var(--color-accent-secondary);
+  color: var(--color-text-primary);
   padding: 0.5rem 1.25rem;
   border-radius: 24px;
   font-size: 0.875rem;
@@ -478,7 +768,7 @@ function goToLogin() {
 .feature-title {
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 700;
-  color: #282828;
+  color: var(--color-text-primary);
   line-height: 1.2;
   margin: 0;
 }
@@ -486,7 +776,7 @@ function goToLogin() {
 .feature-description {
   font-size: 1.125rem;
   line-height: 1.8;
-  color: #282828;
+  color: var(--color-text-primary);
   opacity: 0.85;
   margin: 0;
 }
@@ -501,14 +791,14 @@ function goToLogin() {
   position: relative;
   padding-left: 2rem;
   margin-bottom: 0.75rem;
-  color: #282828;
+  color: var(--color-text-primary);
   font-size: 1rem;
   line-height: 1.6;
 }
 
 .feature-list li:before {
   content: "✓";
-  color: #282828;
+  color: var(--color-text-primary);
   position: absolute;
   left: 0;
   font-weight: bold;
@@ -526,7 +816,7 @@ function goToLogin() {
   flex-direction: column;
   align-items: center;
   padding: 1.5rem;
-  background-color: #e2ded1;
+  background-color: var(--color-accent-secondary);
   border-radius: 12px;
   min-width: 120px;
 }
@@ -534,13 +824,13 @@ function goToLogin() {
 .stat-number {
   font-size: 2rem;
   font-weight: 700;
-  color: #282828;
+  color: var(--color-text-primary);
   line-height: 1;
 }
 
 .stat-label {
   font-size: 0.875rem;
-  color: #282828;
+  color: var(--color-text-primary);
   opacity: 0.8;
   margin-top: 0.5rem;
 }
@@ -594,6 +884,38 @@ function goToLogin() {
   .stat-item {
     flex: 1;
     min-width: 100px;
+  }
+
+  .word-memory-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 100%;
+  }
+
+  .word-memory-card.card-expanded {
+    padding: 3.5rem 2.5rem;
+  }
+
+  .word-memory-stats {
+    padding: 1.5rem 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .word-stat {
+    min-width: 120px;
+  }
+
+  .word-stat-divider {
+    display: none;
+  }
+
+  .floating-word {
+    font-size: 1rem;
+  }
+
+  .features {
+    align-items: center;
   }
 }
 
@@ -663,6 +985,80 @@ function goToLogin() {
   .placeholder-image {
     height: 300px;
   }
+
+  .word-memory-content {
+    gap: 3rem;
+    padding: 3rem 1.5rem;
+  }
+
+  .word-memory-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    max-width: 100%;
+  }
+
+  .word-memory-card {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .word-memory-card.card-expanded {
+    padding: 3rem 2rem;
+  }
+
+  .card-icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1.375rem;
+  }
+
+  .word-memory-card.card-expanded .card-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-desc {
+    font-size: 1rem;
+  }
+
+  .word-memory-card.card-expanded .card-desc {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+  }
+
+  .demo-placeholder {
+    padding: 2rem 1.5rem;
+    min-height: 250px;
+  }
+
+  .demo-text {
+    font-size: 1.25rem;
+  }
+
+  .word-stat {
+    min-width: 100px;
+  }
+
+  .word-stat-value {
+    font-size: 1.5rem;
+  }
+
+  .floating-word {
+    font-size: 0.875rem;
+    opacity: 0.1;
+  }
+
+  .floating-word--6,
+  .floating-word--7,
+  .floating-word--8 {
+    display: none;
+  }
+
+  .features {
+    align-items: center;
+  }
 }
 
 @media (max-width: 480px) {
@@ -704,6 +1100,94 @@ function goToLogin() {
   .decoration-circle--3 {
     width: 150px;
     height: 150px;
+  }
+
+  .word-memory-tag {
+    font-size: 0.75rem;
+    padding: 0.4rem 1rem;
+  }
+
+  .word-memory-title {
+    font-size: 2rem;
+  }
+
+  .word-memory-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .word-memory-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .word-memory-card.card-expanded {
+    padding: 2rem 1.5rem;
+  }
+
+  .card-icon {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .word-memory-card.card-expanded .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-desc {
+    font-size: 0.8125rem;
+  }
+
+  .word-memory-card.card-expanded .card-desc {
+    font-size: 0.9375rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .demo-placeholder {
+    padding: 1.5rem 1rem;
+    min-height: 200px;
+  }
+
+  .demo-text {
+    font-size: 1.125rem;
+  }
+
+  .demo-subtext {
+    font-size: 0.875rem;
+  }
+
+  .word-memory-stats {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .word-stat {
+    min-width: 80px;
+  }
+
+  .word-stat-value {
+    font-size: 1.25rem;
+  }
+
+  .word-stat-label {
+    font-size: 0.75rem;
+  }
+
+  .floating-word {
+    font-size: 0.75rem;
+    opacity: 0.08;
+  }
+
+  .floating-word--4,
+  .floating-word--5 {
+    display: none;
+  }
+
+  .features {
+    align-items: center;
   }
 }
 </style>

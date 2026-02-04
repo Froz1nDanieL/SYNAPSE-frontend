@@ -5,7 +5,13 @@
         <CollectCheck v-model="isCollected" />
       </div>
       <div class="card-content">
-        <div class="word">{{ word.word }}</div>
+        <div class="word-container">
+          <div class="word">{{ word.word }}</div>
+          <div class="pronunciation-buttons">
+            <SpeakerButton :word="word.word" :type="1" size="20px" />
+            <SpeakerButton :word="word.word" :type="2" size="20px" />
+          </div>
+        </div>
         <div class="phonetic">/{{ word.phonetic }}/</div>
         <div class="memory-level" @click.stop>
           <KnowLevelButtons
@@ -91,6 +97,7 @@ import { ref, watch } from "vue";
 import { toggleCollect } from "~/composables/api/wordLearnController";
 import CollectCheck from "./CollectCheck.vue";
 import KnowLevelButtons from "./KnowLevelButtons.vue";
+import SpeakerButton from "./SpeakerButton.vue";
 
 const props = defineProps({
   word: {
@@ -279,6 +286,20 @@ function formatText(text) {
   text-align: center;
 }
 
+.word-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pronunciation-buttons {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
 .phonetic {
   font-size: 1.3rem;
   color: #666;
@@ -402,6 +423,10 @@ function formatText(text) {
   .phonetic {
     font-size: 1.1rem;
   }
+
+  .pronunciation-buttons {
+    gap: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -421,6 +446,10 @@ function formatText(text) {
   .meaning li,
   .example p {
     font-size: 0.9rem;
+  }
+
+  .pronunciation-buttons {
+    gap: 0.8rem;
   }
 }
 
