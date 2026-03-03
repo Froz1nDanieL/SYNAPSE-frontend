@@ -21,7 +21,7 @@
   text-align: center;
 }
 
-.level-button:hover {
+.level-button:hover:not(:disabled) {
   border-color: #000066;
   color: #000066;
   transform: translateY(-2px);
@@ -34,8 +34,13 @@
   font-weight: 600;
 }
 
-.level-button.active:hover {
+.level-button.active:hover:not(:disabled) {
   background-color: #000066dd;
+}
+
+.level-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 </style>
 
@@ -44,6 +49,7 @@
     <button
       class="level-button"
       :class="{ active: modelValue === 1 }"
+      :disabled="isProcessing"
       @click="handleChange(1)"
     >
       认识
@@ -51,6 +57,7 @@
     <button
       class="level-button"
       :class="{ active: modelValue === 0 }"
+      :disabled="isProcessing"
       @click="handleChange(0)"
     >
       不认识
@@ -59,22 +66,34 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { ref } from "vue";
 
 const props = defineProps({
   modelValue: {
     type: Number,
-    default: undefined, // 没有默认值，由父组件控制
+    default: undefined,
   },
 });
 
 const emit = defineEmits(["update:modelValue", "next"]);
 
+const isProcessing = ref(false);
+const CLICK_INTERVAL = 800;
+
 function handleChange(value) {
+  if (isProcessing.value) {
+    return;
+  }
+
+  isProcessing.value = true;
   emit("update:modelValue", value);
-  // 添加短暂延迟，让用户看到按钮状态变化
+
   setTimeout(() => {
     emit("next");
   }, 200);
+
+  setTimeout(() => {
+    isProcessing.value = false;
+  }, CLICK_INTERVAL);
 }
 </script>

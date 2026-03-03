@@ -458,6 +458,16 @@ declare namespace API {
     wordType: string;
   };
 
+  type translateDocumentParams = {
+    from?: string;
+    to?: string;
+  };
+
+  type translateDocumentWithFormatParams = {
+    from?: string;
+    to?: string;
+  };
+
   type TranslateResponse = {
     from?: string;
     to?: string;
