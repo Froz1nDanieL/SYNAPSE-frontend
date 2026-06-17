@@ -1,174 +1,206 @@
 <template>
-  <div class="container">
-    <nav class="nav">
-      <div class="nav-content">
-        <div class="nav-logo">SYNAPSE</div>
-        <div class="nav-user" @click="goToLogin">
-          <UserIcon v-if="!isLogin" class="user-icon" />
-          <UserAvatar
-            v-else
-            :user="loginUserStore.loginUser"
-            class="user-avatar"
-          />
-        </div>
+  <div class="intro-page">
+    <nav class="intro-nav" aria-label="首页导航">
+      <NuxtLink class="brand" to="/">
+        <span>SYNAPSE</span>
+        <strong>突触</strong>
+      </NuxtLink>
+
+      <div class="nav-links">
+        <a href="#method">学习闭环</a>
+        <a href="#features">核心功能</a>
+        <a href="#principle">产品理念</a>
+      </div>
+
+      <div class="nav-actions">
+        <NuxtLink class="ghost-link" to="/user/login">登录</NuxtLink>
+        <NuxtLink class="solid-link" to="/user/register">免费注册</NuxtLink>
       </div>
     </nav>
 
-    <header class="hero">
-      <div class="hero-decoration">
-        <div class="decoration-circle decoration-circle--1"></div>
-        <div class="decoration-circle decoration-circle--2"></div>
-        <div class="decoration-circle decoration-circle--3"></div>
-      </div>
-      <div class="hero-content">
-        <div class="hero-text">
-          <p class="hero-tag">ENGLISH LEARNING PLATFORM</p>
-          <h1 class="hero-title">
-            <span class="title-line">SYN</span>
-            <span class="title-line title-line--accent">APSE</span>
+    <main class="intro-shell">
+      <section class="hero-section" aria-labelledby="hero-title">
+        <p class="brand-mark" aria-label="SYNAPSE 突触" data-reveal>
+          <span>SYNAPSE</span>
+          <strong>突触</strong>
+        </p>
+        <div class="hero-copy" data-reveal>
+          <h1 id="hero-title" aria-label="把英语学成一种反应。">
+            <span class="typing-text" aria-hidden="true">
+              <span
+                v-for="(char, index) in heroChars"
+                :key="`${char}-${index}`"
+                :style="{ '--i': index }"
+              >
+                {{ char }}
+              </span>
+            </span>
           </h1>
-          <p class="hero-subtitle">你的英语学习港湾</p>
+          <p>
+            SYNAPSE
+            把文章精读、点词释义、单词复习、英汉互译和写作批改放回同一个语境。
+            你不需要在工具之间来回切换，只要沿着一篇文章，把理解变成记忆，再把记忆变成表达。
+          </p>
+          <div class="hero-actions" aria-label="开始使用">
+            <NuxtLink class="primary-action" to="/user/register"
+              >开始学习</NuxtLink
+            >
+            <NuxtLink class="secondary-action" to="/user/login"
+              >登录进入</NuxtLink
+            >
+          </div>
         </div>
-        <div class="hero-actions">
-          <div class="action-primary">
-            <GoToButtom title="单词记忆" to="/word/word-main" />
-            <GoToButtom title="文章阅读" to="/article/article-main" />
-          </div>
-          <div class="action-secondary">
-            <GoToButtom title="英汉互译" to="/translation/translation-text" />
-            <GoToButtom title="写作批改" to="/writing-correction" />
-          </div>
+      </section>
+
+      <section
+        id="method"
+        class="method-section"
+        aria-labelledby="method-title"
+      >
+        <div class="section-heading" data-reveal>
+          <span>学习闭环</span>
+          <h2 id="method-title">
+            不是多几个按钮，而是让每一步自然接上下一步。
+          </h2>
         </div>
-      </div>
-      <div class="hero-scroll">
-        <span class="scroll-text">Scroll</span>
-        <div class="scroll-line"></div>
-      </div>
-    </header>
 
-    <section class="features">
-      <div class="feature-section word-memory">
-        <div class="word-memory-container">
-          <div class="word-memory-background">
-            <div class="floating-word floating-word--1">vocabulary</div>
-            <div class="floating-word floating-word--2">memory</div>
-            <div class="floating-word floating-word--3">learn</div>
-            <div class="floating-word floating-word--4">practice</div>
-            <div class="floating-word floating-word--5">recall</div>
-            <div class="floating-word floating-word--6">master</div>
-            <div class="floating-word floating-word--7">review</div>
-            <div class="floating-word floating-word--8">study</div>
-          </div>
+        <div class="loop-board" data-reveal>
+          <article
+            v-for="(step, index) in methodSteps"
+            :key="step.title"
+            :style="{ '--index': index }"
+          >
+            <small>{{ step.index }}</small>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </article>
+        </div>
+      </section>
 
-          <div class="word-memory-content">
-            <div class="word-memory-header">
-              <h2 class="word-memory-title">单词记忆</h2>
-              <p class="word-memory-subtitle">
-                个性化定制单词复习计划，确保每个单词都能牢牢记住
-              </p>
+      <section id="features" class="feature-section" aria-label="核心功能介绍">
+        <div class="feature-section-heading" data-reveal>
+          <span>核心功能</span>
+          <h2>把阅读、记忆、翻译和写作放回同一条线。</h2>
+          <p>
+            每个功能都不是单独的入口，而是一次英语学习中自然发生的动作。
+          </p>
+        </div>
+
+        <div class="feature-list">
+          <article
+            v-for="(feature, index) in features"
+            :key="feature.title"
+            class="feature-row"
+            :class="feature.theme"
+            :style="{ '--index': index }"
+            data-reveal
+          >
+            <div class="feature-copy">
+              <span>{{ feature.label }}</span>
+              <h2>{{ feature.title }}</h2>
+              <p>{{ feature.text }}</p>
+              <NuxtLink :to="feature.to">{{ feature.action }}</NuxtLink>
             </div>
 
-            <div class="word-memory-grid">
-              <div
-                v-for="(card, index) in cards"
-                :key="card.id"
-                class="word-memory-card"
-                :class="{
-                  'card-expanded': expandedCard === card.id,
-                  'card-hidden':
-                    expandedCard !== null && expandedCard !== card.id,
-                }"
-                @click="toggleCard(card.id)"
-              >
-                <component :is="card.icon" class="card-icon" />
-                <h3 class="card-title">{{ card.title }}</h3>
-                <p class="card-desc">{{ card.desc }}</p>
-                <div v-if="expandedCard === card.id" class="card-demo-content">
-                  <div class="demo-placeholder">
-                    <p class="demo-text">演示内容区域</p>
-                    <p class="demo-subtext">此处可接入对应功能的演示内容</p>
+            <div class="feature-proof" aria-hidden="true">
+              <template v-if="feature.theme === 'reading-feature'">
+                <p class="article-line">
+                  Language becomes usable when a word returns inside a living
+                  <span class="demo-word">
+                    context
+                    <i class="cursor-tap"></i>
+                  </span>.
+                </p>
+                <div class="floating-word-card">
+                  <strong>context</strong>
+                  <small>/ˈkɑːntekst/</small>
+                  <em>语境，上下文</em>
+                </div>
+              </template>
+
+              <template v-else-if="feature.theme === 'memory-feature'">
+                <div class="memory-stack">
+                  <span>serendipity</span>
+                  <span>convey</span>
+                  <span>hesitate</span>
+                  <span>precise</span>
+                </div>
+                <div class="review-ring"><span>68%</span></div>
+              </template>
+
+              <template v-else-if="feature.theme === 'translation-feature'">
+                <div class="translation-pair">
+                  <p>这句话到底想表达什么？</p>
+                  <p>What is this sentence really trying to say?</p>
+                </div>
+              </template>
+
+              <template v-else>
+                <div class="manuscript-demo">
+                  <p>
+                    The city was <span class="strike">very very</span>
+                    <span class="highlight">remarkably</span> quiet after rain.
+                  </p>
+                  <p>
+                    I <span class="wave">have went</span> through the article and
+                    found a sharper argument.
+                  </p>
+                  <div>
+                    <span>删去重复</span>
+                    <span>修正时态</span>
+                    <span>补强衔接</span>
                   </div>
                 </div>
-              </div>
+              </template>
             </div>
-          </div>
+          </article>
         </div>
-      </div>
+      </section>
 
-      <div class="feature-section article-reading">
-        <div class="feature-container">
-          <div class="feature-content feature-content--reverse">
-            <div class="feature-visual">
-              <h2 class="feature-title">文章阅读</h2>
-              <p class="feature-description">
-                精选外刊、新闻、故事等优质英文内容，涵盖科技、文化、经济等多个领域，全面提升你的阅读理解能力和词汇量。
-              </p>
-              <ul class="feature-list">
-                <li>实时更新的热门英文资讯</li>
-                <li>分级阅读，适合不同水平学习者</li>
-                <li>生词即时标注与翻译</li>
-              </ul>
-            </div>
-            <div class="feature-image">
-              <ArticleReadingDemo />
-            </div>
-          </div>
+      <section
+        id="principle"
+        class="principle-section"
+        aria-labelledby="principle-title"
+      >
+        <div class="principle-statement" data-reveal>
+          <span>产品理念</span>
+          <h2 id="principle-title">
+            语言不是靠堆功能学会的，而是在可重复的语境里长出来的。
+          </h2>
         </div>
-      </div>
 
-      <div class="feature-section translation">
-        <div class="feature-container">
-          <div class="feature-content">
-            <div class="feature-visual">
-              <h2 class="feature-title">英汉互译</h2>
-              <p class="feature-description">
-                强大的双语翻译引擎，支持句子、段落翻译，准确处理各类语境下的语言转换。无论是学术文献还是日常对话，都能提供高质量翻译结果。
-              </p>
-              <ul class="feature-list">
-                <li>上下文语境识别，提高翻译准确性</li>
-                <li>专业术语库，覆盖各行业领域</li>
-                <li>语音输入输出，便捷的口语翻译</li>
-              </ul>
-            </div>
-            <div class="feature-image">
-              <div class="placeholder-image">翻译功能示意图</div>
-            </div>
-          </div>
+        <div class="principle-list" data-reveal>
+          <article v-for="item in principles" :key="item.title">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.text }}</p>
+          </article>
         </div>
-      </div>
+      </section>
 
-      <div class="feature-section writing-correction">
-        <div class="feature-container">
-          <div class="feature-content feature-content--reverse">
-            <div class="feature-visual">
-              <h2 class="feature-title">写作批改</h2>
-              <p class="feature-description">
-                AI智能批改系统，从语法、词汇、句式等多个维度分析英语作文并提供详细的改进建议，帮助你快速提升英文写作水平。
-              </p>
-              <ul class="feature-list">
-                <li>全方位错误检测与纠正</li>
-                <li>个性化写作建议和评分</li>
-                <li>范文对比，明确改进方向</li>
-              </ul>
-            </div>
-            <div class="feature-image">
-              <div class="placeholder-image">写作批改示意图</div>
-            </div>
-          </div>
+      <section class="cta-section" aria-labelledby="cta-title" data-reveal>
+        <span>今日开始</span>
+        <h2 id="cta-title">先读一篇文章，再带走几个真正会用的表达。</h2>
+        <p>
+          注册后进入你的 100vh
+          今日杂志版面，从精读开始，把查、背、译、写放回同一条学习路径。
+        </p>
+        <div class="hero-actions">
+          <NuxtLink class="primary-action" to="/user/register"
+            >免费创建账号</NuxtLink
+          >
+          <NuxtLink class="secondary-action" to="/user/login"
+            >已有账号登录</NuxtLink
+          >
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
   </div>
 </template>
 
 <script setup>
+import { computed, onBeforeUnmount, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useLoginUserStore } from "~/stores/userLoginUserStore";
-import {
-  BookOutlined,
-  AimOutlined,
-  ThunderboltOutlined,
-  BarChartOutlined,
-} from "@ant-design/icons-vue";
 
 definePageMeta({
   layout: false,
@@ -176,1018 +208,975 @@ definePageMeta({
 
 const router = useRouter();
 const loginUserStore = useLoginUserStore();
+let revealObserver;
 
-const isLogin = computed(() => {
-  return loginUserStore.loginUser.userName !== "未登录";
-});
+const heroChars = Array.from("把英语学成一种反应。");
 
-function goToLogin() {
-  if (isLogin.value) {
-    router.push("/user/profile");
-  } else {
-    router.push("/user/login");
-  }
-}
-
-const expandedCard = ref(null);
-
-const cards = [
-  { id: 0, title: "个性化词库", desc: "贴合你的学习目标", icon: BookOutlined },
-  { id: 1, title: "多种模式", desc: "适应不同学习习惯", icon: AimOutlined },
-  { id: 2, title: "趣味游戏", desc: "轻松学习体验", icon: ThunderboltOutlined },
-  { id: 3, title: "进度追踪", desc: "实时学习数据", icon: BarChartOutlined },
+const methodSteps = [
+  {
+    index: "01",
+    title: "先读懂",
+    text: "从真实文章进入语境，先看内容、观点和句子结构。",
+  },
+  {
+    index: "02",
+    title: "再点词",
+    text: "光标点到陌生单词时，释义卡在文章旁边出现。",
+  },
+  {
+    index: "03",
+    title: "接着复习",
+    text: "把今天遇到的词放进复习节奏，而不是只收藏一次。",
+  },
+  {
+    index: "04",
+    title: "最后输出",
+    text: "用翻译和写作批改，把理解转成自己的表达。",
+  },
 ];
 
-function toggleCard(cardId) {
-  if (expandedCard.value === cardId) {
-    expandedCard.value = null;
-  } else {
-    expandedCard.value = cardId;
+const features = [
+  {
+    label: "文章精读",
+    title: "在原文里查词，不打断阅读的气。",
+    text: "阅读外刊、短文或考试材料时，光标点击单词即可弹出释义、音标和用法信息。单词卡贴近文字出现，让理解停留在上下文里。",
+    action: "进入精读",
+    to: "/article/article-main",
+    theme: "reading-feature",
+  },
+  {
+    label: "单词记忆",
+    title: "把今天遇到的词，安排到明天还能想起的位置。",
+    text: "复习不再只是单词表。系统会围绕熟悉度、复习节奏和学习记录，提醒你重新辨认、回忆和使用真正见过的词。",
+    action: "开始记忆",
+    to: "/word/word-main",
+    theme: "memory-feature",
+  },
+  {
+    label: "翻译工作台",
+    title: "一句话翻顺，理解力也会变清楚。",
+    text: "适合处理长句、段落、学习笔记和文档。你可以比较中文思路和英文表达之间的差异，找到更自然的说法。",
+    action: "打开翻译",
+    to: "/translation/translation-text",
+    theme: "translation-feature",
+  },
+  {
+    label: "写作批改",
+    title: "让草稿被看见，也让问题被讲清楚。",
+    text: "从语法、用词、句间衔接和段落逻辑给出修改线索，让每次批改都变成下一次写作能带走的经验。",
+    action: "查看批改",
+    to: "/writing/writing-main",
+    theme: "writing-feature",
+  },
+];
+
+const principles = [
+  {
+    title: "语境优先",
+    text: "先从文章进入真实表达，再处理单词和句子，而不是孤立背诵。",
+  },
+  {
+    title: "复习可见",
+    text: "把学习状态放在每天能看到的位置，让下一步很明确。",
+  },
+  {
+    title: "输出导向",
+    text: "翻译和写作不是附加功能，而是检验你是否真正会用。",
+  },
+];
+
+const isLogin = computed(() => {
+  const user = loginUserStore.loginUser || {};
+  const userName = String(user.userName || "");
+  const isGuestName =
+    !userName ||
+    userName === "未登录" ||
+    userName.includes("未登录") ||
+    userName.includes("鏈");
+
+  return Boolean(
+    user.id || user.userAccount || user.userAvatar || !isGuestName,
+  );
+});
+
+function redirectLoggedUser() {
+  if (isLogin.value) {
+    router.replace("/home");
   }
 }
+
+function initRevealMotion() {
+  if (!import.meta.client) {
+    return;
+  }
+
+  const revealElements = document.querySelectorAll("[data-reveal]");
+
+  if (!("IntersectionObserver" in window)) {
+    revealElements.forEach((element) => element.classList.add("is-visible"));
+    return;
+  }
+
+  revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.18 },
+  );
+
+  revealElements.forEach((element) => {
+    revealObserver.observe(element);
+  });
+}
+
+onMounted(() => {
+  redirectLoggedUser();
+  initRevealMotion();
+});
+
+onBeforeUnmount(() => {
+  revealObserver?.disconnect();
+});
 </script>
 
 <style scoped>
-.container {
-  min-height: 100vh;
-  background-color: var(--color-bg-primary);
+.intro-page {
+  --paper: #fbfbfa;
+  --surface: #ffffff;
+  --surface-soft: #f7f7f4;
+  --ink: var(--color-text-primary, #282828);
+  --muted: #6e6a63;
+  --quiet: #9a968e;
+  --rule: #e7e4dc;
+  --accent: #4f6657;
+  --accent-soft: #edf3ec;
+  --serif: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC",
+    "Times New Roman", serif;
+  --sans: "SF Pro Display", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC",
+    "Source Han Sans SC", system-ui, sans-serif;
+
+  height: 100dvh;
+  overflow-y: auto;
   overflow-x: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
 }
 
-.nav {
+.intro-page::before {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: transparent;
-  padding: 1.5rem 3rem;
-  transition: background-color 0.3s ease;
-}
-
-.nav-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav-logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  letter-spacing: 2px;
-}
-
-.nav-user {
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-}
-
-.nav-user:hover {
-  opacity: 0.8;
-}
-
-.hero {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-decoration {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   pointer-events: none;
-  z-index: 0;
+  content: "";
+  background-image: linear-gradient(
+      rgba(40, 40, 40, 0.028) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(40, 40, 40, 0.024) 1px, transparent 1px);
+  background-size: 6rem 6rem;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
 }
 
-.decoration-circle {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.08;
-}
-
-.decoration-circle--1 {
-  width: 600px;
-  height: 600px;
-  background: var(--color-text-primary);
-  top: -200px;
-  right: -150px;
-  animation: float 20s ease-in-out infinite;
-}
-
-.decoration-circle--2 {
-  width: 400px;
-  height: 400px;
-  background: var(--color-text-primary);
-  bottom: -100px;
-  left: -100px;
-  animation: float 15s ease-in-out infinite reverse;
-}
-
-.decoration-circle--3 {
-  width: 250px;
-  height: 250px;
-  background: var(--color-text-primary);
-  top: 50%;
-  left: 10%;
-  animation: float 12s ease-in-out infinite 2s;
-}
-
-.hero-content {
-  text-align: center;
-  padding: 2rem;
-  max-width: 1200px;
-  z-index: 1;
-  animation: fadeInUp 1s ease-out;
-}
-
-.hero-text {
-  margin-bottom: 4rem;
-}
-
-.hero-tag {
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 4px;
-  color: var(--color-text-primary);
-  opacity: 0.6;
-  margin-bottom: 1.5rem;
-  text-transform: uppercase;
-}
-
-.hero-title {
-  font-size: clamp(4rem, 12vw, 10rem);
-  font-weight: 900;
-  margin-bottom: 1.5rem;
-  color: var(--color-text-primary);
-  letter-spacing: -0.02em;
-  line-height: 0.95;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.title-line {
-  display: block;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.title-line--accent {
-  color: var(--color-text-primary);
-}
-
-.hero-subtitle {
-  font-size: clamp(1.25rem, 3vw, 2rem);
-  color: var(--color-text-primary);
-  margin-bottom: 0;
-  font-weight: 300;
-  opacity: 0.7;
-  letter-spacing: 0.02em;
-}
-
-.hero-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.action-primary,
-.action-secondary {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.hero-scroll {
-  position: absolute;
-  bottom: 3rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  z-index: 1;
-  animation: fadeIn 1.5s ease-out 1s both;
-}
-
-.scroll-text {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 2px;
-  color: var(--color-text-primary);
-  opacity: 0.5;
-  text-transform: uppercase;
-}
-
-.scroll-line {
-  width: 1px;
-  height: 60px;
-  background: linear-gradient(
-    to bottom,
-    var(--color-text-primary),
-    transparent
-  );
-  animation: scrollDown 2s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  25% {
-    transform: translate(20px, -20px) scale(1.02);
-  }
-  50% {
-    transform: translate(-10px, 10px) scale(0.98);
-  }
-  75% {
-    transform: translate(-20px, -10px) scale(1.01);
-  }
-}
-
-@keyframes scrollDown {
-  0% {
-    transform: scaleY(0);
-    transform-origin: top;
-  }
-  50% {
-    transform: scaleY(1);
-    transform-origin: top;
-  }
-  51% {
-    transform: scaleY(1);
-    transform-origin: bottom;
-  }
-  100% {
-    transform: scaleY(0);
-    transform-origin: bottom;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.features {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.feature-section {
-  padding: 8rem 2rem;
-  width: 100%;
-  min-height: 80vh;
-  display: flex;
-  align-items: center;
-}
-
-.feature-section.word-memory {
-  background-color: var(--color-bg-primary);
-  position: relative;
-  overflow: hidden;
-}
-
-.word-memory-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-.word-memory-background {
-  position: absolute;
+.intro-nav {
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.floating-word {
-  position: absolute;
-  font-size: clamp(1rem, 2vw, 1.5rem);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  opacity: 0.15;
-  white-space: nowrap;
-  letter-spacing: 0.05em;
-}
-
-.floating-word--1 {
-  top: 10%;
-  left: 5%;
-  animation: floatWord 8s ease-in-out infinite;
-}
-
-.floating-word--2 {
-  top: 20%;
-  right: 8%;
-  animation: floatWord 10s ease-in-out infinite 1s;
-}
-
-.floating-word--3 {
-  top: 40%;
-  left: 3%;
-  animation: floatWord 12s ease-in-out infinite 2s;
-}
-
-.floating-word--4 {
-  top: 60%;
-  right: 5%;
-  animation: floatWord 9s ease-in-out infinite 0.5s;
-}
-
-.floating-word--5 {
-  top: 75%;
-  left: 8%;
-  animation: floatWord 11s ease-in-out infinite 1.5s;
-}
-
-.floating-word--6 {
-  top: 15%;
-  left: 50%;
-  animation: floatWord 13s ease-in-out infinite 3s;
-}
-
-.floating-word--7 {
-  top: 50%;
-  right: 15%;
-  animation: floatWord 7s ease-in-out infinite 2.5s;
-}
-
-.floating-word--8 {
-  top: 85%;
-  right: 10%;
-  animation: floatWord 14s ease-in-out infinite 0.8s;
-}
-
-@keyframes floatWord {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-30px);
-  }
-}
-
-.word-memory-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4rem;
-  padding: 4rem 2rem;
-}
-
-.word-memory-header {
-  text-align: center;
-  max-width: 800px;
-}
-
-.word-memory-title {
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  font-weight: 700;
-  color: var(--color-text-primary);
-  line-height: 1.1;
-  margin: 0 0 1.5rem 0;
-  letter-spacing: -0.02em;
-}
-
-.word-memory-subtitle {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  line-height: 1.6;
-  color: var(--color-text-primary);
-  opacity: 0.8;
-  margin: 0;
-}
-
-.word-memory-grid {
+  z-index: 20;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2.5rem;
-  width: 100%;
-  max-width: 900px;
-  position: relative;
+  grid-template-columns: minmax(11rem, 1fr) auto minmax(12rem, 1fr);
+  align-items: center;
+  min-height: 4.5rem;
+  gap: 1.5rem;
+  padding: 0 2rem;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(251, 251, 250, 0.92);
+  backdrop-filter: blur(18px);
 }
 
-.word-memory-card {
-  background-color: var(--color-bg-primary);
-  padding: 3.5rem 2.5rem;
-  border-radius: 20px;
-  text-align: center;
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-    padding 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  position: relative;
+.brand,
+.nav-links a,
+.ghost-link,
+.solid-link,
+.primary-action,
+.secondary-action,
+.feature-copy a {
+  color: inherit;
+  text-decoration: none;
 }
 
-.word-memory-card:hover {
-  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.1);
-  z-index: 10000;
-}
-
-.word-memory-card.card-expanded {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  height: 100%;
-  grid-column: 1 / -1;
-  grid-row: 1 / -1;
-  z-index: 100;
-  padding: 4rem 3rem;
-  cursor: pointer;
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-    padding 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.word-memory-card.card-hidden {
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
-}
-
-.card-icon {
-  font-size: 4rem;
-  color: var(--color-text-primary);
-  opacity: 0.8;
-  margin-bottom: 2rem;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.word-memory-card:hover .card-icon {
-  transform: scale(1.15);
-  opacity: 1;
-}
-
-.word-memory-card.card-expanded .card-icon {
-  transform: scale(1.2);
-  opacity: 1;
-}
-
-.card-title {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0 0 1rem 0;
-  line-height: 1.3;
-}
-
-.word-memory-card.card-expanded .card-title {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-}
-
-.card-desc {
-  font-size: 1.125rem;
-  color: var(--color-text-primary);
-  opacity: 0.7;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.word-memory-card.card-expanded .card-desc {
-  font-size: 1.25rem;
-  margin-bottom: 3rem;
-}
-
-.card-demo-content {
-  margin-top: 2rem;
-  animation: fadeInUp 0.5s ease-out 0.3s both;
-}
-
-.demo-placeholder {
-  background-color: var(--color-accent-secondary);
-  border-radius: 16px;
-  padding: 3rem 2rem;
-  min-height: 300px;
+.brand {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: baseline;
+  gap: 0.55rem;
+}
+
+.brand span {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.brand strong {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.nav-links,
+.nav-actions {
+  display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.demo-text {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0;
+.nav-links {
+  color: var(--muted);
+  font-size: 0.92rem;
 }
 
-.demo-subtext {
-  font-size: 1rem;
-  color: var(--color-text-primary);
-  opacity: 0.7;
-  margin: 0;
+.nav-links a {
+  transition: color 180ms ease;
 }
 
-.feature-section:nth-child(even) {
-  background-color: var(--color-bg-primary);
+.nav-links a:hover {
+  color: var(--ink);
 }
 
-.feature-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
+.nav-actions {
+  justify-self: end;
 }
 
-.feature-content {
-  display: flex;
+.ghost-link,
+.solid-link,
+.primary-action,
+.secondary-action,
+.feature-copy a {
+  display: inline-flex;
   align-items: center;
-  gap: 4rem;
-  min-height: 500px;
-}
-
-.feature-content--reverse {
-  flex-direction: row-reverse;
-}
-
-.feature-visual {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.feature-image {
-  flex: 1;
-  display: flex;
   justify-content: center;
-  align-items: center;
+  min-height: 2.55rem;
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  padding: 0 1rem;
+  font-size: 0.92rem;
+  line-height: 1;
+  transition: background-color 180ms ease, border-color 180ms ease,
+    color 180ms ease, transform 180ms ease;
 }
 
-.placeholder-image {
-  width: 100%;
-  height: 400px;
-  background-color: var(--color-accent-secondary);
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--color-text-primary);
-  font-size: 1.25rem;
-  font-weight: 500;
+.solid-link,
+.primary-action {
+  background: var(--ink);
+  color: var(--paper);
 }
 
-.feature-tag {
-  display: inline-block;
-  background-color: var(--color-accent-secondary);
-  color: var(--color-text-primary);
-  padding: 0.5rem 1.25rem;
-  border-radius: 24px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  align-self: flex-start;
+.ghost-link,
+.secondary-action {
+  border-color: var(--rule);
+  background: transparent;
 }
 
-.feature-title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 700;
-  color: var(--color-text-primary);
-  line-height: 1.2;
-  margin: 0;
+.primary-action:hover,
+.secondary-action:hover,
+.solid-link:hover,
+.ghost-link:hover,
+.feature-copy a:hover {
+  transform: translateY(-2px);
 }
 
-.feature-description {
-  font-size: 1.125rem;
-  line-height: 1.8;
-  color: var(--color-text-primary);
-  opacity: 0.85;
-  margin: 0;
+.primary-action:active,
+.secondary-action:active,
+.solid-link:active,
+.ghost-link:active,
+.feature-copy a:active {
+  transform: scale(0.98);
 }
 
-.feature-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.feature-list li {
+.intro-shell {
   position: relative;
-  padding-left: 2rem;
-  margin-bottom: 0.75rem;
-  color: var(--color-text-primary);
-  font-size: 1rem;
-  line-height: 1.6;
+  z-index: 1;
+  width: min(100%, 1480px);
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
 }
 
-.feature-list li:before {
-  content: "✓";
-  color: var(--color-text-primary);
-  position: absolute;
-  left: 0;
-  font-weight: bold;
-  font-size: 1.125rem;
+.hero-section {
+  display: grid;
+  align-content: center;
+  min-height: calc(100dvh - 4.5rem);
+  padding: clamp(3rem, 7vw, 6rem) 0 clamp(4rem, 8vw, 7rem);
 }
 
-.feature-stats {
+.hero-kicker {
+  width: fit-content;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 0.45rem;
+  color: var(--accent);
+  font-size: clamp(0.9rem, 1vw, 1rem);
+}
+
+.brand-mark {
   display: flex;
-  gap: 2rem;
-  margin-top: 2rem;
+  align-items: baseline;
+  gap: clamp(0.8rem, 2vw, 1.7rem);
+  margin: clamp(1.2rem, 3vw, 2rem) 0 0;
 }
 
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.5rem;
-  background-color: var(--color-accent-secondary);
-  border-radius: 12px;
-  min-width: 120px;
-}
-
-.stat-number {
-  font-size: 2rem;
+.brand-mark span {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(5.2rem, 17vw, 16.5rem);
   font-weight: 700;
-  color: var(--color-text-primary);
+  letter-spacing: -0.08em;
+  line-height: 0.78;
+}
+
+.brand-mark strong {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 6vw, 7rem);
+  font-weight: 400;
   line-height: 1;
 }
 
-.stat-label {
-  font-size: 0.875rem;
-  color: var(--color-text-primary);
-  opacity: 0.8;
-  margin-top: 0.5rem;
+.hero-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(22rem, 0.48fr);
+  gap: clamp(2rem, 5vw, 6rem);
+  align-items: end;
+  margin-top: clamp(2.2rem, 5vw, 4rem);
+  border-top: 1px solid var(--ink);
+  padding-top: clamp(1.4rem, 3vw, 2.4rem);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
+.hero-copy h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(3.2rem, 8vw, 8.5rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+}
+
+.typing-text {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.typing-text span {
+  opacity: 0;
+  transform: translateY(0.28em);
+  animation: type-in 360ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--i) * 90ms + 260ms);
+}
+
+.hero-copy p {
+  max-width: 43rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.25vw, 1.16rem);
+  line-height: 1.95;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.7rem;
+}
+
+.section-heading {
+  display: grid;
+  gap: 0.9rem;
+  max-width: 70rem;
+}
+
+.section-heading span,
+.feature-section-heading span,
+.principle-statement span,
+.cta-section > span,
+.feature-copy span {
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.section-heading h2,
+.feature-section-heading h2,
+.principle-statement h2,
+.cta-section h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 5.8vw, 6.2rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.method-section,
+.principle-section,
+.cta-section {
+  border-top: 1px solid var(--ink);
+  padding: clamp(4rem, 8vw, 7rem) 0;
+}
+
+.loop-board {
+  display: grid;
+  grid-template-columns: 1.05fr 0.92fr 1.18fr 0.85fr;
+  gap: 1px;
+  margin-top: clamp(2rem, 5vw, 4rem);
+  border: 1px solid var(--rule);
+  background: var(--rule);
+}
+
+.loop-board article {
+  min-height: 17rem;
+  padding: clamp(1.2rem, 2vw, 1.8rem);
+  background: var(--surface);
+  animation: lift-in 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--index) * 90ms);
+}
+
+.loop-board small {
+  display: block;
+  color: var(--quiet);
+  font-family: "SF Mono", "JetBrains Mono", Consolas, monospace;
+  font-size: 0.75rem;
+}
+
+.loop-board h3 {
+  margin: clamp(3rem, 6vw, 5rem) 0 0.8rem;
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 400;
+}
+
+.loop-board p,
+.feature-copy p,
+.principle-list p,
+.cta-section p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.82;
+}
+
+.feature-section {
+  display: grid;
+  gap: clamp(2.2rem, 5vw, 4rem);
+  border-top: 1px solid var(--ink);
+  padding: clamp(4rem, 8vw, 7rem) 0;
+  background: transparent;
+}
+
+.feature-section-heading {
+  display: grid;
+  max-width: 72rem;
+  gap: 1rem;
+}
+
+.feature-section-heading p {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.82;
+}
+
+.feature-list {
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--rule);
+  background: var(--rule);
+}
+
+.feature-row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(22rem, 0.8fr);
+  gap: clamp(2rem, 5vw, 6rem);
+  align-items: stretch;
+  min-height: 31rem;
+  padding: clamp(1.4rem, 3vw, 2.4rem);
+  background: var(--paper);
+}
+
+.feature-row:nth-child(even) {
+  grid-template-columns: minmax(22rem, 0.8fr) minmax(0, 0.9fr);
+}
+
+.feature-row:nth-child(even) .feature-copy {
+  grid-column: 2;
+}
+
+.feature-row:nth-child(even) .feature-proof {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.feature-copy {
+  display: grid;
+  align-content: space-between;
+  justify-items: start;
+  gap: 1.5rem;
+}
+
+.feature-copy h2 {
+  max-width: 48rem;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.3rem, 4.8vw, 5.3rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.feature-copy p {
+  max-width: 43rem;
+  font-size: 1rem;
+}
+
+.feature-copy a {
+  border-color: var(--ink);
+}
+
+.feature-proof {
+  position: relative;
+  display: grid;
+  min-height: 23rem;
+  align-content: center;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  padding: clamp(1.2rem, 3vw, 2.4rem);
+  overflow: hidden;
+}
+
+.feature-proof::before {
+  position: absolute;
+  inset: 1.2rem;
+  content: "";
+  border: 1px solid rgba(40, 40, 40, 0.055);
+  pointer-events: none;
+}
+
+.article-line {
+  max-width: 24rem;
+  color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.65rem, 3vw, 3rem);
+  line-height: 1.24;
+}
+
+.article-line .demo-word {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  color: var(--ink);
+}
+
+.article-line .demo-word::after {
+  position: absolute;
+  right: -0.04em;
+  bottom: 0.04em;
+  left: -0.04em;
+  z-index: -1;
+  height: 0.44em;
+  content: "";
+  background: var(--accent-soft);
+}
+
+.cursor-tap {
+  position: absolute;
+  right: -0.38rem;
+  bottom: 0.16em;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  background: var(--surface);
+  animation: cursor-tap 3.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.floating-word-card {
+  position: absolute;
+  right: clamp(1.5rem, 4vw, 3rem);
+  bottom: clamp(1.5rem, 4vw, 3rem);
+  display: grid;
+  gap: 0.3rem;
+  width: min(15rem, calc(100% - 3rem));
+  border: 1px solid var(--ink);
+  background: var(--surface);
+  padding: 1rem;
+  animation: card-reveal 3.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.floating-word-card strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.65rem;
+  font-weight: 400;
+}
+
+.floating-word-card small,
+.floating-word-card em {
+  color: var(--muted);
+  font-style: normal;
+}
+
+.memory-stack {
+  display: grid;
+  gap: 0.7rem;
+  width: min(23rem, 100%);
+}
+
+.memory-stack span {
+  border-bottom: 1px solid var(--rule);
+  padding: 0.85rem 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.6rem, 3vw, 2.8rem);
+}
+
+.review-ring {
+  position: absolute;
+  right: clamp(1.5rem, 4vw, 3rem);
+  top: clamp(1.5rem, 4vw, 3rem);
+  display: grid;
+  width: 6.2rem;
+  height: 6.2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) 0 68%, var(--rule) 68% 100%);
+}
+
+.review-ring span {
+  display: grid;
+  width: 4.7rem;
+  height: 4.7rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.translation-pair {
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--rule);
+  background: var(--rule);
+}
+
+.translation-pair p {
+  margin: 0;
+  background: var(--surface);
+  padding: clamp(1.1rem, 3vw, 2rem);
+  font-family: var(--serif);
+  font-size: clamp(1.65rem, 3vw, 3.2rem);
+  line-height: 1.22;
+}
+
+.translation-pair p + p {
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--accent);
+}
+
+.manuscript-demo {
+  display: grid;
+  gap: 1.2rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.2rem, 2.2vw, 2.2rem);
+  line-height: 1.62;
+}
+
+.manuscript-demo p {
+  margin: 0;
+}
+
+.strike {
+  position: relative;
+  color: rgba(40, 40, 40, 0.52);
+}
+
+.strike::after {
+  position: absolute;
+  right: -0.08rem;
+  bottom: 0.48em;
+  left: -0.08rem;
+  height: 2px;
+  content: "";
+  background: var(--accent);
+  transform: rotate(-4deg);
+}
+
+.highlight {
+  background: var(--accent-soft);
+}
+
+.wave {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1.5px;
+}
+
+.manuscript-demo div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+}
+
+.manuscript-demo div span {
+  border: 1px solid var(--rule);
+  background: var(--surface-soft);
+  padding: 0.5rem 0.65rem;
+  color: var(--accent);
+}
+
+.principle-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(24rem, 0.75fr);
+  gap: clamp(2rem, 7vw, 8rem);
+  align-items: start;
+}
+
+.principle-list {
+  display: grid;
+  border-top: 1px solid var(--rule);
+}
+
+.principle-list article {
+  padding: 1.35rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.principle-list h3 {
+  margin: 0 0 0.45rem;
+  font-family: var(--serif);
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  font-weight: 400;
+}
+
+.cta-section {
+  display: grid;
+  justify-items: start;
+  gap: 1rem;
+  padding-bottom: 7rem;
+}
+
+.cta-section h2 {
+  max-width: 65rem;
+}
+
+.cta-section p {
+  max-width: 44rem;
+  font-size: 1rem;
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+[data-reveal].is-visible {
+  animation: reveal-up 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes type-in {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@media (max-width: 1024px) {
-  .hero-title {
-    font-size: clamp(3.5rem, 10vw, 6rem);
-  }
-
-  .decoration-circle--1 {
-    width: 400px;
-    height: 400px;
-    top: -100px;
-    right: -80px;
-  }
-
-  .decoration-circle--2 {
-    width: 300px;
-    height: 300px;
-    bottom: -80px;
-    left: -80px;
-  }
-
-  .decoration-circle--3 {
-    width: 200px;
-    height: 200px;
-    left: 5%;
-  }
-
-  .feature-content {
-    flex-direction: column !important;
-    gap: 3rem;
-  }
-
-  .feature-stats {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .stat-item {
-    flex: 1;
-    min-width: 100px;
-  }
-
-  .word-memory-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    max-width: 100%;
-  }
-
-  .word-memory-card.card-expanded {
-    padding: 3.5rem 2.5rem;
-  }
-
-  .word-memory-stats {
-    padding: 1.5rem 2rem;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-  }
-
-  .word-stat {
-    min-width: 120px;
-  }
-
-  .word-stat-divider {
-    display: none;
-  }
-
-  .floating-word {
-    font-size: 1rem;
-  }
-
-  .features {
-    align-items: center;
+@keyframes reveal-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (max-width: 768px) {
-  .nav {
-    padding: 0.5rem 1rem;
+@keyframes lift-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
 
-  .nav-logo {
-    font-size: 1.125rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cursor-tap {
+  0%,
+  24% {
+    opacity: 0;
+    transform: translate(1.2rem, 0.75rem) scale(0.76);
   }
 
-  .hero-content {
-    padding: 1.5rem;
+  36%,
+  54% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
   }
 
-  .hero-tag {
-    font-size: 0.75rem;
-    letter-spacing: 3px;
+  64%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.7);
+  }
+}
+
+@keyframes card-reveal {
+  0%,
+  48% {
+    opacity: 0;
+    transform: translateY(0.9rem);
   }
 
-  .hero-title {
-    font-size: clamp(2.5rem, 15vw, 4rem);
+  62%,
+  86% {
+    opacity: 1;
+    transform: translateY(0);
   }
 
-  .hero-subtitle {
-    font-size: 1.125rem;
+  100% {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
   }
 
-  .hero-actions {
-    gap: 1.25rem;
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .intro-nav {
+    grid-template-columns: 1fr auto;
   }
 
-  .action-primary,
-  .action-secondary {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+  .nav-links {
+    display: none;
   }
 
-  .hero-scroll {
-    bottom: 2rem;
+  .hero-copy,
+  .feature-row,
+  .feature-row:nth-child(even),
+  .principle-section {
+    grid-template-columns: 1fr;
   }
 
-  .scroll-line {
-    height: 40px;
+  .feature-row:nth-child(even) .feature-copy,
+  .feature-row:nth-child(even) .feature-proof {
+    grid-column: auto;
+    grid-row: auto;
   }
 
-  .feature-section {
-    padding: 5rem 1.5rem;
+  .loop-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .intro-nav {
+    min-height: 4rem;
+    padding: 0 1rem;
+  }
+
+  .nav-actions {
+    gap: 0.5rem;
+  }
+
+  .ghost-link {
+    display: none;
+  }
+
+  .solid-link,
+  .primary-action,
+  .secondary-action {
+    min-height: 2.45rem;
+    padding: 0 0.8rem;
+  }
+
+  .intro-shell {
+    padding: 0 1rem 3rem;
+  }
+
+  .hero-section {
+    min-height: calc(100dvh - 4rem);
+    padding: 2.4rem 0 4rem;
+  }
+
+  .brand-mark {
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .brand-mark span {
+    font-size: clamp(4rem, 25vw, 7.4rem);
+  }
+
+  .brand-mark strong {
+    font-size: clamp(2rem, 14vw, 3.8rem);
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(3rem, 14vw, 5rem);
+  }
+
+  .loop-board {
+    grid-template-columns: 1fr;
+  }
+
+  .loop-board article {
+    min-height: 12rem;
+  }
+
+  .loop-board h3 {
+    margin-top: 2.5rem;
+  }
+
+  .feature-row {
     min-height: auto;
-  }
-
-  .feature-stats {
-    gap: 1rem;
-  }
-
-  .stat-item {
     padding: 1rem;
-    min-width: 80px;
   }
 
-  .stat-number {
-    font-size: 1.5rem;
+  .feature-proof {
+    min-height: 18rem;
   }
 
-  .placeholder-image {
-    height: 300px;
+  .feature-copy h2,
+  .section-heading h2,
+  .principle-statement h2,
+  .cta-section h2 {
+    letter-spacing: -0.035em;
   }
 
-  .word-memory-content {
-    gap: 3rem;
-    padding: 3rem 1.5rem;
+  .floating-word-card,
+  .review-ring {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    top: auto;
+    margin-top: 1.2rem;
   }
 
-  .word-memory-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-    max-width: 100%;
-  }
-
-  .word-memory-card {
-    padding: 2.5rem 1.5rem;
-  }
-
-  .word-memory-card.card-expanded {
-    padding: 3rem 2rem;
-  }
-
-  .card-icon {
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .card-title {
-    font-size: 1.375rem;
-  }
-
-  .word-memory-card.card-expanded .card-title {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .card-desc {
-    font-size: 1rem;
-  }
-
-  .word-memory-card.card-expanded .card-desc {
-    font-size: 1.125rem;
-    margin-bottom: 2rem;
-  }
-
-  .demo-placeholder {
-    padding: 2rem 1.5rem;
-    min-height: 250px;
-  }
-
-  .demo-text {
-    font-size: 1.25rem;
-  }
-
-  .word-stat {
-    min-width: 100px;
-  }
-
-  .word-stat-value {
-    font-size: 1.5rem;
-  }
-
-  .floating-word {
-    font-size: 0.875rem;
-    opacity: 0.1;
-  }
-
-  .floating-word--6,
-  .floating-word--7,
-  .floating-word--8 {
-    display: none;
-  }
-
-  .features {
-    align-items: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-title {
-    font-size: clamp(2rem, 18vw, 3rem);
-  }
-
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-
-  .hero-tag {
-    font-size: 0.625rem;
-    letter-spacing: 2px;
-  }
-
-  .feature-title {
-    font-size: 1.75rem;
-  }
-
-  .feature-description {
-    font-size: 1rem;
-  }
-
-  .decoration-circle--1 {
-    width: 300px;
-    height: 300px;
-    top: -80px;
-    right: -60px;
-  }
-
-  .decoration-circle--2 {
-    width: 200px;
-    height: 200px;
-    bottom: -60px;
-    left: -60px;
-  }
-
-  .decoration-circle--3 {
-    width: 150px;
-    height: 150px;
-  }
-
-  .word-memory-tag {
-    font-size: 0.75rem;
-    padding: 0.4rem 1rem;
-  }
-
-  .word-memory-title {
-    font-size: 2rem;
-  }
-
-  .word-memory-subtitle {
-    font-size: 0.875rem;
-  }
-
-  .word-memory-card {
-    padding: 1.5rem 1rem;
-  }
-
-  .word-memory-card.card-expanded {
-    padding: 2rem 1.5rem;
-  }
-
-  .card-icon {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-  }
-
-  .card-title {
-    font-size: 1rem;
-  }
-
-  .word-memory-card.card-expanded .card-title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .card-desc {
-    font-size: 0.8125rem;
-  }
-
-  .word-memory-card.card-expanded .card-desc {
-    font-size: 0.9375rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .demo-placeholder {
-    padding: 1.5rem 1rem;
-    min-height: 200px;
-  }
-
-  .demo-text {
-    font-size: 1.125rem;
-  }
-
-  .demo-subtext {
-    font-size: 0.875rem;
-  }
-
-  .word-memory-stats {
-    padding: 1rem;
-    gap: 0.75rem;
-  }
-
-  .word-stat {
-    min-width: 80px;
-  }
-
-  .word-stat-value {
-    font-size: 1.25rem;
-  }
-
-  .word-stat-label {
-    font-size: 0.75rem;
-  }
-
-  .floating-word {
-    font-size: 0.75rem;
-    opacity: 0.08;
-  }
-
-  .floating-word--4,
-  .floating-word--5 {
-    display: none;
-  }
-
-  .features {
-    align-items: center;
+  .cursor-tap {
+    right: -0.32rem;
+    bottom: 0.12em;
   }
 }
 </style>

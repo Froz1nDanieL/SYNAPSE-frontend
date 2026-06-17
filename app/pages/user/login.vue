@@ -1,93 +1,100 @@
 <template>
-  <div class="auth-container">
-    <div class="auth-card">
-      <h1 class="auth-title">用户登录</h1>
+  <div class="auth-page">
+    <nav class="auth-nav" aria-label="登录导航">
+      <NuxtLink class="brand" to="/">
+        <span>SYNAPSE</span>
+        <strong>突触</strong>
+      </NuxtLink>
+      <NuxtLink class="nav-entry" to="/user/register">注册</NuxtLink>
+    </nav>
 
-      <!-- 登录方式切换 -->
-      <div class="login-tabs">
-        <button
-          type="button"
-          class="login-tab"
-          :class="{ active: loginType === 'account' }"
-          @click="loginType = 'account'"
-        >
-          账号登录
-        </button>
-        <button
-          type="button"
-          class="login-tab"
-          :class="{ active: loginType === 'email' }"
-          @click="loginType = 'email'"
-        >
-          邮箱登录
-        </button>
-      </div>
+    <main class="auth-shell" aria-labelledby="login-title">
+      <section class="auth-stage">
+        <p class="auth-kicker">Account</p>
+        <h1 id="login-title" class="auth-title">登录</h1>
 
-      <form class="auth-form" @submit.prevent="handleLogin">
-        <div class="form-group">
-          <label for="username">{{
-            loginType === "account" ? "账号" : "邮箱"
-          }}</label>
-          <input
-            id="username"
-            v-model="loginForm.username"
-            :type="loginType === 'email' ? 'email' : 'text'"
-            class="form-input"
-            :placeholder="loginType === 'account' ? '请输入账号' : '请输入邮箱'"
-            required
-          />
-          <p v-if="errors.username" class="error-message">
-            {{ errors.username }}
-          </p>
+        <div class="login-tabs" aria-label="登录方式">
+          <button
+            type="button"
+            class="login-tab"
+            :class="{ active: loginType === 'account' }"
+            @click="loginType = 'account'"
+          >
+            账号
+          </button>
+          <button
+            type="button"
+            class="login-tab"
+            :class="{ active: loginType === 'email' }"
+            @click="loginType = 'email'"
+          >
+            邮箱
+          </button>
         </div>
 
-        <div class="form-group">
-          <label for="password">密码</label>
-          <div class="password-input-container">
+        <form class="auth-form" @submit.prevent="handleLogin">
+          <div class="form-line">
+            <label for="username">{{
+              loginType === "account" ? "账号" : "邮箱"
+            }}</label>
             <input
-              id="password"
-              v-model="loginForm.password"
-              :type="showPassword ? 'text' : 'password'"
-              class="form-input"
-              placeholder="请输入密码"
+              id="username"
+              v-model="loginForm.username"
+              :type="loginType === 'email' ? 'email' : 'text'"
+              :placeholder="
+                loginType === 'account' ? '输入你的账号' : '输入你的邮箱'
+              "
+              autocomplete="username"
               required
             />
-            <button
-              type="button"
-              class="password-toggle-button"
-              @click="toggleShowPassword"
-            >
-              {{ showPassword ? "隐藏" : "显示" }}
-            </button>
+            <p v-if="errors.username" class="field-message error-message">
+              {{ errors.username }}
+            </p>
           </div>
-          <p v-if="errors.password" class="error-message">
-            {{ errors.password }}
+
+          <div class="form-line">
+            <label for="password">密码</label>
+            <div class="inline-control">
+              <input
+                id="password"
+                v-model="loginForm.password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="输入你的密码"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                class="text-control"
+                @click="toggleShowPassword"
+              >
+                {{ showPassword ? "隐藏" : "显示" }}
+              </button>
+            </div>
+            <p v-if="errors.password" class="field-message error-message">
+              {{ errors.password }}
+            </p>
+          </div>
+
+          <button type="submit" class="auth-button" :disabled="isSubmitting">
+            {{ isSubmitting ? "登录中..." : "登录" }}
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <NuxtLink to="/user/forgot-password">忘记密码？</NuxtLink>
+          <p>
+            还没有账号？
+            <NuxtLink to="/user/register">立即注册</NuxtLink>
           </p>
         </div>
-
-        <button type="submit" class="auth-button" :disabled="isSubmitting">
-          {{ isSubmitting ? "登录中..." : "登录" }}
-        </button>
-      </form>
-
-      <div class="auth-footer">
-        <p>
-          还没有账号？<NuxtLink to="/user/register" class="auth-link"
-            >立即注册</NuxtLink
-          >
-        </p>
-        <p class="forgot-password">
-          <NuxtLink to="/user/forgot-password" class="auth-link">
-            忘记密码？
-          </NuxtLink>
-        </p>
-      </div>
-    </div>
+      </section>
+    </main>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { reactive, ref } from "vue";
 import { userLogin } from "~/composables/api/userController";
 import { useLoginUserStore } from "~/stores/userLoginUserStore";
 
@@ -97,46 +104,33 @@ definePageMeta({
 
 const router = useRouter();
 const loginUserStore = useLoginUserStore();
-
-// 登录方式：account（账号登录）或 email（邮箱登录）
 const loginType = ref("account");
+const showPassword = ref(false);
+const isSubmitting = ref(false);
 
-// 登录表单数据
 const loginForm = reactive({
   username: "",
   password: "",
 });
 
-// 错误信息
 const errors = reactive({
   username: "",
   password: "",
 });
 
-// 邮箱格式验证正则
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// 密码可见性
-const showPassword = ref(false);
-
-// 表单提交状态
-const isSubmitting = ref(false);
-
-// 切换密码可见性
 function toggleShowPassword() {
   showPassword.value = !showPassword.value;
 }
 
-// 表单验证
 function validateForm() {
   let isValid = true;
 
-  // 重置错误信息
   Object.keys(errors).forEach((key) => {
     errors[key] = "";
   });
 
-  // 验证账号/邮箱
   if (!loginForm.username) {
     errors.username =
       loginType.value === "account" ? "请输入账号" : "请输入邮箱";
@@ -149,7 +143,6 @@ function validateForm() {
     isValid = false;
   }
 
-  // 验证密码
   if (!loginForm.password) {
     errors.password = "请输入密码";
     isValid = false;
@@ -159,7 +152,6 @@ function validateForm() {
 }
 
 async function handleLogin() {
-  // 验证表单
   if (!validateForm()) {
     return;
   }
@@ -173,16 +165,13 @@ async function handleLogin() {
     });
 
     if (res.data.code === 0 && res.data.data) {
-      // 更新store中的用户信息
       loginUserStore.setLoginUser(res.data.data);
-      // 登录成功，跳转到首页
       await router.push("/");
     } else {
       alert(res.data.message || "登录失败");
     }
   } catch (error) {
-    // 显示更详细的错误信息
-    if (error.response && error.response.data && error.response.data.message) {
+    if (error.response?.data?.message) {
       alert(`登录失败：${error.response.data.message}`);
     } else {
       alert("登录过程中出现错误：" + (error.message || "未知错误"));
@@ -195,161 +184,291 @@ async function handleLogin() {
 </script>
 
 <style scoped>
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #fff;
-  padding: 1rem;
+.auth-page {
+  --paper: var(--color-bg-primary, #f1efe9);
+  --paper-soft: #f8f7f2;
+  --ink: var(--color-text-primary, #282828);
+  --muted: #746f67;
+  --quiet: #aaa59b;
+  --rule: var(--color-accent-secondary, #e2ded1);
+  --accent: #516b5b;
+  --danger: #a0443e;
+  --serif: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC",
+    Georgia, serif;
+  --sans: "SF Pro Display", "PingFang SC", "Microsoft YaHei",
+    "Noto Sans CJK SC", "Source Han Sans SC", system-ui, sans-serif;
+
+  min-height: 100dvh;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(40, 40, 40, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(40, 40, 40, 0.02) 1px, transparent 1px),
+    var(--paper);
+  background-size: 6rem 6rem;
+  color: var(--ink);
+  font-family: var(--sans);
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 51, 0.1);
+.auth-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 4.5rem;
+  padding: 0 clamp(1.25rem, 4vw, 3rem);
+}
+
+.brand,
+.nav-entry,
+.auth-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
+}
+
+.brand span {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.18rem;
+  font-weight: 700;
+}
+
+.brand strong {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.nav-entry {
+  color: var(--muted);
+  font-size: 0.92rem;
+  transition: color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-entry:hover,
+.auth-footer a:hover {
+  color: var(--ink);
+}
+
+.auth-shell {
+  display: grid;
+  min-height: calc(100dvh - 4.5rem);
+  place-items: start center;
+  padding: clamp(5rem, 17vh, 9rem) 1.25rem 4rem;
+}
+
+.auth-stage {
+  width: min(100%, 39.5rem);
+}
+
+.auth-kicker {
+  margin: 0 0 0.65rem;
+  color: var(--quiet);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 .auth-title {
+  margin: 0;
+  color: var(--ink);
+  font-family: Georgia, var(--serif);
+  font-size: clamp(2.5rem, 5vw, 4.1rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
   text-align: center;
-  color: #000033;
-  margin-bottom: 2rem;
-  font-size: 1.8rem;
 }
 
-/* 登录方式切换标签页 */
 .login-tabs {
   display: flex;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #ddd;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: clamp(2.1rem, 4vh, 3rem) 0 1.5rem;
 }
 
 .login-tab {
-  flex: 1;
-  padding: 0.75rem;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: #666;
-  font-size: 1rem;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--quiet);
   cursor: pointer;
-  transition: all 0.2s;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0 0 0.35rem;
+  transition:
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.login-tab.active,
 .login-tab:hover {
-  color: #000033;
-}
-
-.login-tab.active {
-  color: #000033;
-  border-bottom-color: #000033;
-  font-weight: 500;
+  border-bottom-color: var(--ink);
+  color: var(--ink);
 }
 
 .auth-form {
-  margin-bottom: 1.5rem;
+  display: grid;
+  gap: 1.55rem;
 }
 
-.form-group {
-  margin-bottom: 1.5rem;
+.form-line {
+  display: grid;
+  gap: 0.45rem;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #000033;
-  font-weight: 500;
+.form-line label {
+  color: var(--quiet);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
-.form-input {
+.form-line input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  box-sizing: border-box;
-  color: #000033;
-}
-
-.form-input:focus {
+  min-height: 3rem;
+  border: 0;
+  border-bottom: 2px solid color-mix(in srgb, var(--rule) 76%, var(--quiet));
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.05rem;
   outline: none;
-  border-color: #000033;
-  box-shadow: 0 0 0 2px rgba(0, 0, 51, 0.2);
+  padding: 0.45rem 0;
+  transition:
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 密码输入容器 */
-.password-input-container {
-  position: relative;
+.form-line input::placeholder {
+  color: color-mix(in srgb, var(--quiet) 78%, transparent);
 }
 
-.password-toggle-button {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #000033;
-  font-size: 0.9rem;
+.form-line input:focus {
+  border-bottom-color: var(--ink);
+}
+
+.inline-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  border-bottom: 2px solid color-mix(in srgb, var(--rule) 76%, var(--quiet));
+}
+
+.inline-control:focus-within {
+  border-bottom-color: var(--ink);
+}
+
+.inline-control input {
+  border-bottom: 0;
+}
+
+.text-control {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
   cursor: pointer;
-  padding: 0;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0 0 0.85rem 1rem;
+  transition: color 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 错误信息 */
+.text-control:hover {
+  color: var(--ink);
+}
+
+.field-message {
+  margin: 0.2rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
 .error-message {
-  margin-top: 0.5rem;
-  color: #ff4d4f;
-  font-size: 0.9rem;
-  margin-bottom: 0;
+  color: var(--danger);
 }
 
 .auth-button {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #000033;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
+  min-height: 4.55rem;
+  margin-top: 0.55rem;
+  border: 0;
+  border-radius: 0;
+  background: #34322c;
+  color: var(--paper-soft);
   cursor: pointer;
-  transition: background-color 0.2s;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  transition:
+    background-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-button:hover:not(:disabled) {
-  background-color: #000055;
+  background: #282820;
+}
+
+.auth-button:active:not(:disabled) {
+  transform: scale(0.99);
 }
 
 .auth-button:disabled {
-  background-color: #ccc;
   cursor: not-allowed;
+  opacity: 0.58;
 }
 
 .auth-footer {
-  text-align: center;
-  color: #666;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.8rem 1.2rem;
+  margin-top: 1.55rem;
+  color: var(--muted);
+  font-size: 0.98rem;
 }
 
-.auth-link {
-  color: #000033;
-  text-decoration: none;
+.auth-footer p {
+  margin: 0;
+}
+
+.auth-footer a {
+  color: var(--ink);
   font-weight: 500;
 }
 
-.auth-link:hover {
-  text-decoration: underline;
+button:focus-visible,
+a:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--ink) 42%, transparent);
+  outline-offset: 4px;
 }
 
-/* 响应式设计 */
-@media (max-width: 480px) {
-  .auth-card {
-    padding: 1.5rem;
+input:focus-visible {
+  outline: none;
+}
+
+@media (max-width: 640px) {
+  .auth-nav {
+    min-height: 4rem;
+    padding: 0 1rem;
   }
 
-  .auth-title {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
+  .auth-shell {
+    min-height: calc(100dvh - 4rem);
+    padding: 3.75rem 1rem 2rem;
+  }
+
+  .auth-stage {
+    width: 100%;
+  }
+
+  .auth-footer {
+    display: grid;
   }
 }
 </style>

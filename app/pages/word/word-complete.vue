@@ -1,29 +1,35 @@
 <template>
-  <div class="container">
-    <div class="header">
+  <main class="complete-page">
+    <aside class="result-panel">
+      <p class="eyebrow">Complete</p>
       <h1>学习完成</h1>
-      <p class="subtitle">本次学习共 {{ learnRecords.length }} 个单词</p>
-    </div>
-    <div class="content">
-      <div class="stats-card">
-        <div class="stat-item">
-          <span class="stat-number">{{ totalWords }}</span>
-          <span class="stat-label">总单词数</span>
+      <p class="subtitle">本次学习 {{ learnRecords.length }} 个单词</p>
+
+      <dl class="stats-list">
+        <div>
+          <dt>总数</dt>
+          <dd>{{ totalWords }}</dd>
         </div>
-        <div class="stat-item">
-          <span class="stat-number">{{ knownWords }}</span>
-          <span class="stat-label">认识</span>
+        <div>
+          <dt>认识</dt>
+          <dd>{{ knownWords }}</dd>
         </div>
-        <div class="stat-item">
-          <span class="stat-number">{{ unknownWords }}</span>
-          <span class="stat-label">不认识</span>
+        <div>
+          <dt>不认识</dt>
+          <dd>{{ unknownWords }}</dd>
         </div>
-        <div class="stat-item">
-          <span class="stat-number">{{ totalErrorCount }}</span>
-          <span class="stat-label">错误次数</span>
+        <div>
+          <dt>错误次数</dt>
+          <dd>{{ totalErrorCount }}</dd>
         </div>
-      </div>
-      <div class="table-container">
+      </dl>
+
+      <button class="primary-button" @click="goBack">返回学习计划</button>
+    </aside>
+
+    <section class="record-panel">
+      <div v-if="loading" class="state-block">加载中...</div>
+      <div v-else class="table-wrap">
         <table class="record-table">
           <thead>
             <tr>
@@ -31,7 +37,7 @@
               <th>音标</th>
               <th>翻译</th>
               <th>初印象</th>
-              <th>错误次数</th>
+              <th>错误</th>
             </tr>
           </thead>
           <tbody>
@@ -50,7 +56,7 @@
                 class="translation-cell"
                 v-html="formatTranslation(record.word?.translation)"
               ></td>
-              <td class="firstknow-cell">
+              <td>
                 <span
                   class="tag"
                   :class="
@@ -60,7 +66,7 @@
                   {{ record.learnRecord.firstKnow === 1 ? "认识" : "不认识" }}
                 </span>
               </td>
-              <td class="choice-cell">
+              <td>
                 <span
                   class="tag"
                   :class="
@@ -74,11 +80,8 @@
           </tbody>
         </table>
       </div>
-      <div class="button-container">
-        <button class="primary-button" @click="goBack">返回学习计划</button>
-      </div>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -88,14 +91,10 @@ import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
 const route = useRoute();
 
-// 学习记录数据
 const learnRecords = ref<API.WordLearnRequest[]>([]);
-// 单词数据
 const wordsData = ref<API.WordCardVO[]>([]);
-// 加载状态
 const loading = ref(true);
 
-// 从路由参数获取学习记录和单词数据
 onMounted(() => {
   try {
     const learnRecordsParam = route.query.learnRecords;
@@ -104,37 +103,29 @@ onMounted(() => {
     if (learnRecordsParam && typeof learnRecordsParam === "string") {
       const parsedRecords = JSON.parse(decodeURIComponent(learnRecordsParam));
       learnRecords.value = parsedRecords as API.WordLearnRequest[];
-      console.log("解析后的学习记录:", learnRecords.value);
     }
 
     if (wordsDataParam && typeof wordsDataParam === "string") {
       const parsedWords = JSON.parse(decodeURIComponent(wordsDataParam));
       wordsData.value = parsedWords as API.WordCardVO[];
-      console.log("解析后的单词数据:", wordsData.value);
     }
   } catch (error) {
-    console.error("解析数据失败:", error);
+    console.error("解析学习结果失败:", error);
   } finally {
     loading.value = false;
   }
 });
 
-// 合并学习记录和单词详情
 const displayRecords = computed(() => {
-  const records = learnRecords.value.map((record) => {
-    const wordId = record.wordId;
-    // 从wordsData中查找对应的单词
-    const word = wordsData.value.find((w) => w.wordId === wordId);
+  return learnRecords.value.map((record) => {
+    const word = wordsData.value.find((w) => w.wordId === record.wordId);
     return {
       learnRecord: record,
       word,
     };
   });
-  console.log("合并后的显示记录:", records);
-  return records;
 });
 
-// 统计信息
 const totalWords = computed(() => learnRecords.value.length);
 const knownWords = computed(
   () => learnRecords.value.filter((record) => record.firstKnow === 1).length
@@ -142,28 +133,18 @@ const knownWords = computed(
 const unknownWords = computed(
   () => learnRecords.value.filter((record) => record.firstKnow === 0).length
 );
-const correctChoices = computed(
-  () =>
-    learnRecords.value.filter((record) => record.choiceCorrect === true).length
-);
-
-// 统计总错误次数
 const totalErrorCount = computed(() =>
   learnRecords.value.reduce((total, record) => {
     return total + (record.choiceErrorCount || 0);
   }, 0)
 );
 
-// 只取翻译中第一个换行符之前的内容
 function formatTranslation(translation?: string): string {
-  if (!translation) return "-";
-  if (typeof translation !== "string") return "-";
+  if (!translation || typeof translation !== "string") return "-";
 
-  // 同时处理实际换行符和转义的\n字符
   const actualNewlineIndex = translation.indexOf("\n");
   const escapedNewlineIndex = translation.indexOf("\\n");
 
-  // 找到最早出现的换行符位置
   let newlineIndex = -1;
   if (actualNewlineIndex !== -1 && escapedNewlineIndex !== -1) {
     newlineIndex = Math.min(actualNewlineIndex, escapedNewlineIndex);
@@ -173,206 +154,223 @@ function formatTranslation(translation?: string): string {
     newlineIndex = escapedNewlineIndex;
   }
 
-  const result =
-    newlineIndex === -1 ? translation : translation.substring(0, newlineIndex);
-  return result;
+  return newlineIndex === -1
+    ? translation
+    : translation.substring(0, newlineIndex);
 }
 
-// 返回学习计划页面
 function goBack() {
-  router.push("/word");
+  router.push("/word/word-main");
 }
 </script>
 
 <style scoped>
-.container {
-  min-height: 100vh;
-  background-color: #f6f6f6;
-  padding: 2rem 1rem;
+.complete-page {
+  height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(240px, 18rem) minmax(620px, 1fr);
+  gap: 3rem;
+  padding: 3rem 6vw;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+.result-panel {
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 1.5rem;
+  padding-top: 1rem;
+  overflow: hidden;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 2rem;
+.eyebrow {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.56;
 }
 
-.header h1 {
-  font-size: 2.5rem;
-  color: #000066;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+h1 {
+  margin: 0;
+  font-size: 3rem;
+  line-height: 1.08;
+  font-weight: 800;
 }
 
 .subtitle {
-  font-size: 1.1rem;
-  color: #666;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  opacity: 0.72;
+}
+
+.stats-list {
+  display: grid;
+  gap: 0;
+  margin: 1rem 0 0;
+}
+
+.stats-list div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid var(--color-accent-secondary);
+}
+
+.stats-list div:first-child {
+  border-top: 1px solid var(--color-accent-secondary);
+}
+
+dt,
+dd {
   margin: 0;
 }
 
-.content {
-  width: 100%;
-  max-width: 1200px;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+dt {
+  font-size: 0.875rem;
+  opacity: 0.64;
 }
 
-.stats-card {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 2rem;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+dd {
+  font-size: 1.5rem;
+  font-weight: 800;
 }
 
-.stat-item {
-  text-align: center;
-  flex: 1;
-  min-width: 120px;
-}
-
-.stat-number {
-  display: block;
-  font-size: 2.5rem;
+.primary-button {
+  min-height: 3rem;
+  border: 1px solid var(--color-text-primary);
+  border-radius: 6px;
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  font: inherit;
   font-weight: 700;
-  color: #000066;
-  margin-bottom: 0.5rem;
+  cursor: pointer;
 }
 
-.stat-label {
-  display: block;
-  font-size: 0.95rem;
-  color: #666;
-  font-weight: 500;
-}
-
-.table-container {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.record-panel {
+  min-width: 0;
+  min-height: 0;
+  align-self: start;
+  border: 1px solid var(--color-accent-secondary);
+  border-radius: 8px;
   overflow: hidden;
+  max-height: 100%;
+}
+
+.state-block {
+  min-height: 24rem;
+  display: grid;
+  place-items: center;
+  opacity: 0.72;
+}
+
+.table-wrap {
+  width: 100%;
+  max-height: calc(100vh - 6rem);
+  overflow: auto;
 }
 
 .record-table {
   width: 100%;
+  min-width: 48rem;
   border-collapse: collapse;
 }
 
-.record-table th {
-  background-color: #f5f5f5;
-  padding: 1rem 1.5rem;
+.record-table th,
+.record-table td {
+  padding: 1rem;
   text-align: left;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #333;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-accent-secondary);
+  color: var(--color-text-primary);
 }
 
-.record-table td {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 0.95rem;
-  color: #333;
+.record-table th {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  opacity: 0.64;
+}
+
+.record-table tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 .record-row:hover {
-  background-color: #fafafa;
+  background: var(--color-accent-secondary);
 }
 
 .word-cell {
-  font-weight: 600;
-  color: #000066;
+  font-size: 1rem;
+  font-weight: 800;
 }
 
-.phonetic-cell {
-  color: #666;
-  font-style: italic;
+.phonetic-cell,
+.translation-cell {
+  opacity: 0.72;
 }
 
 .translation-cell {
-  max-width: 300px;
+  max-width: 20rem;
 }
 
 .tag {
-  display: inline-block;
-  padding: 0.3rem 0.8rem;
-  border-radius: 16px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.875rem;
+  padding: 0 0.625rem;
+  border: 1px solid var(--color-accent-secondary);
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .tag.known,
 .tag.correct {
-  background-color: #e8f5e8;
-  color: #2e7d32;
-  border: 1px solid #c8e6c9;
+  border-color: var(--color-text-primary);
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
 }
 
 .tag.unknown,
 .tag.incorrect {
-  background-color: #ffebee;
-  color: #c62828;
-  border: 1px solid #ffcdd2;
+  background: transparent;
+  color: var(--color-text-primary);
 }
 
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
+@media (max-width: 980px) {
+  .complete-page {
+    grid-template-columns: 1fr;
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+    align-content: start;
+  }
+
+  .result-panel {
+    overflow: visible;
+  }
+
+  .record-panel {
+    max-height: none;
+  }
+
+  .table-wrap {
+    max-height: none;
+  }
 }
 
-.primary-button {
-  background-color: #000066;
-  color: white;
-  border: none;
-  padding: 0.8rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.primary-button:hover {
-  background-color: #00004d;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 66, 0.3);
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .header h1 {
-    font-size: 2rem;
+@media (max-width: 560px) {
+  .complete-page {
+    padding: 1rem;
   }
 
-  .stats-card {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .stat-item {
-    min-width: auto;
-  }
-
-  .table-container {
-    overflow-x: auto;
-  }
-
-  .record-table {
-    min-width: 600px;
-  }
-
-  .record-table th,
-  .record-table td {
-    padding: 0.8rem 1rem;
-    font-size: 0.9rem;
+  h1 {
+    font-size: 2.25rem;
   }
 }
 </style>

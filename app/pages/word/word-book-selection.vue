@@ -1,63 +1,45 @@
 <template>
-  <div class="container">
-    <div class="content">
-      <div class="word-books-grid">
-        <!-- 前4个词书卡片 -->
+  <main class="book-selection">
+    <header class="selection-header">
+      <NuxtLink class="back-link" to="/word/word-main">单词学习</NuxtLink>
+      <div>
+        <p class="eyebrow">Book</p>
+        <h1>选择词书</h1>
+      </div>
+    </header>
+
+    <section class="library-panel">
+      <div class="library-top">
+        <p class="library-count">{{ bookList.length }} 本词书</p>
+      </div>
+      <div class="book-grid">
         <WordBookCard
-          v-for="(book, index) in wordBooks.slice(0, 4)"
+          v-for="book in bookList"
           :key="book.type"
           :book="book"
-          :position="index + 1"
-          @select="selectWordBook"
-        />
-
-        <!-- 第五个位置：页面标题 -->
-        <div class="word-book-card position-5 page-title-card">
-          <h1 class="page-title">选择<br />词书</h1>
-        </div>
-
-        <!-- 后4个词书卡片 -->
-        <WordBookCard
-          v-for="(book, index) in wordBooks.slice(4, 8)"
-          :key="book.type"
-          :book="book"
-          :position="index + 6"
+          :position="1"
           @select="selectWordBook"
         />
       </div>
-    </div>
+    </section>
 
-    <!-- 确认学习对话框 -->
-    <div v-if="showConfirmDialog" class="dialog-overlay">
-      <div class="dialog-content">
-        <h2>是否学习该词书？</h2>
-        <p>{{ selectedBook?.name }}</p>
-        <div class="dialog-buttons">
-          <button @click="closeConfirmDialog" class="btn btn-cancel">
-            取消
-          </button>
-          <button @click="handleConfirmStudy" class="btn btn-confirm">
-            是
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 设置每日学习量对话框 -->
     <div v-if="showDailyCountDialog" class="dialog-overlay">
       <div class="dialog-content">
-        <h2>设置每日学习量</h2>
-        <div class="daily-count-input">
-          <button @click="decreaseDailyCount" class="count-btn">-</button>
-          <input
-            type="number"
-            v-model.number="dailyNewCount"
-            min="1"
-            max="100"
-            class="count-input"
-          />
-          <button @click="increaseDailyCount" class="count-btn">+</button>
-        </div>
+        <h2>{{ selectedBook?.name }}</h2>
+        <label class="daily-count-input">
+          <span>每日新词</span>
+          <div class="count-control">
+            <button @click="decreaseDailyCount" class="count-btn">-</button>
+            <input
+              type="number"
+              v-model.number="dailyNewCount"
+              min="20"
+              max="100"
+              class="count-input"
+            />
+            <button @click="increaseDailyCount" class="count-btn">+</button>
+          </div>
+        </label>
         <div class="dialog-buttons">
           <button @click="closeDailyCountDialog" class="btn btn-cancel">
             取消
@@ -69,13 +51,11 @@
       </div>
     </div>
 
-    <!-- 切换词书确认对话框 -->
     <div v-if="showSwitchDialog" class="dialog-overlay">
       <div class="dialog-content">
         <h2>切换词书</h2>
         <p>
-          您当前正在学习 {{ currentPlan?.wordTypeName }}，是否切换到
-          {{ selectedBook?.name }}？
+          {{ currentPlan?.wordTypeName }} → {{ selectedBook?.name }}
         </p>
         <div class="dialog-buttons">
           <button @click="closeSwitchDialog" class="btn btn-cancel">
@@ -87,10 +67,19 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup>
+import { computed, ref } from "vue";
+import { getWordBookList } from "~/composables/api/wordLearnController";
+import {
+  createLearnPlan,
+  getCurrentPlan,
+  switchWordBook,
+} from "~/composables/api/learnPlanController";
+import { navigateTo } from "nuxt/app";
+
 definePageMeta({
   layout: "default",
   middleware: ["auth"],
@@ -101,24 +90,13 @@ useHead({
   meta: [
     {
       name: "description",
-      content: "选择适合您学习目标的词书：中考、高考、四级、六级、雅思、托福等",
+      content: "选择词书",
     },
   ],
 });
 
-// 导入必要的API
-import { getWordBookList } from "~/composables/api/wordLearnController";
-import {
-  createLearnPlan,
-  getCurrentPlan,
-  switchWordBook,
-} from "~/composables/api/learnPlanController";
+const route = useRoute();
 
-// 导航
-import { navigateTo } from "nuxt/app";
-const router = useRouter();
-
-// 词书列表
 const { data: wordBooks } = useAsyncData("wordBooks", async () => {
   try {
     const response = await getWordBookList();
@@ -129,7 +107,6 @@ const { data: wordBooks } = useAsyncData("wordBooks", async () => {
   }
 });
 
-// 获取当前学习计划
 const { data: currentPlan } = useAsyncData("currentPlan", async () => {
   try {
     const response = await getCurrentPlan();
@@ -140,33 +117,22 @@ const { data: currentPlan } = useAsyncData("currentPlan", async () => {
   }
 });
 
-// 状态变量
+const bookList = computed(() => wordBooks.value || []);
 const selectedBook = ref(null);
-const showConfirmDialog = ref(false);
 const showDailyCountDialog = ref(false);
 const showSwitchDialog = ref(false);
 const dailyNewCount = ref(20);
 
-// 选择词书的方法
 const selectWordBook = (book) => {
   selectedBook.value = book;
 
-  // 检查当前计划
   if (!currentPlan.value) {
-    // 情况1: 无计划 → 弹窗设置每日量
     showDailyCountDialog.value = true;
   } else if (currentPlan.value.wordType === book.type) {
-    // 情况2: 有计划且是当前词书 → 直接进入学习
     navigateToLearningPage();
   } else {
-    // 情况3: 有计划但不是当前词书 → 弹窗确认切换
     showSwitchDialog.value = true;
   }
-};
-
-// 对话框控制函数
-const closeConfirmDialog = () => {
-  showConfirmDialog.value = false;
 };
 
 const closeDailyCountDialog = () => {
@@ -179,9 +145,8 @@ const closeSwitchDialog = () => {
   selectedBook.value = null;
 };
 
-// 每日学习量控制
 const decreaseDailyCount = () => {
-  if (dailyNewCount.value > 1) {
+  if (dailyNewCount.value > 20) {
     dailyNewCount.value--;
   }
 };
@@ -192,13 +157,6 @@ const increaseDailyCount = () => {
   }
 };
 
-// 处理确认学习
-const handleConfirmStudy = () => {
-  closeConfirmDialog.value;
-  // 这里可以添加直接进入学习的逻辑，如果需要的话
-};
-
-// 创建学习计划
 const handleCreatePlan = async () => {
   try {
     const response = await createLearnPlan({
@@ -211,15 +169,12 @@ const handleCreatePlan = async () => {
       navigateToLearningPage();
     } else {
       console.error("创建学习计划失败:", response.data.message);
-      // 可以添加错误提示
     }
   } catch (error) {
     console.error("创建学习计划失败:", error);
-    // 可以添加错误提示
   }
 };
 
-// 切换词书
 const handleSwitchPlan = async () => {
   try {
     const response = await switchWordBook({
@@ -231,278 +186,280 @@ const handleSwitchPlan = async () => {
       navigateToLearningPage();
     } else {
       console.error("切换词书失败:", response.data.message);
-      // 可以添加错误提示
     }
   } catch (error) {
     console.error("切换词书失败:", error);
-    // 可以添加错误提示
   }
 };
 
-// 导航到学习页面
 const navigateToLearningPage = () => {
-  // 从路由参数中获取重定向地址
-  const route = useRoute();
   const redirectPath = route.query.redirect || "/word/word-memory";
-
-  // 使用navigateTo并添加force选项，确保页面正确刷新
   navigateTo(redirectPath, { force: true });
 };
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  background-color: #f9f8f5;
+.book-selection {
   height: 100vh;
-  overflow: hidden;
-  padding: 2rem;
   box-sizing: border-box;
-}
-
-/* 页面标题卡片样式 */
-.page-title-card {
-  cursor: default;
-  background-color: transparent !important;
-  box-shadow: none !important;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  width: 150px;
-  height: 180px;
-}
-
-/* 取消中间选择词书卡片的hover效果 */
-.page-title-card:hover {
-  transform: none !important;
-  box-shadow: none !important;
-  opacity: 1 !important;
-}
-
-.page-title {
-  font-size: 3rem;
-  font-weight: 700;
-  color: #000033;
-  margin: 0 0 0.5rem 0;
-  line-height: 1.1;
-  text-align: center;
-}
-
-.page-subtitle {
-  font-size: 1.1rem;
-  color: #666;
-  margin: 0;
-  padding: 0 1rem;
-}
-
-.content {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.word-books-grid {
+  overflow: hidden;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  padding: clamp(2rem, 5vh, 4rem) clamp(2rem, 6vw, 6rem);
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: minmax(13rem, 18rem) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.selection-header {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  justify-items: center;
+  padding-top: 0.5rem;
+}
+
+.back-link {
+  width: fit-content;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  opacity: 0.64;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.56;
+}
+
+h1 {
+  margin: 0;
+  font-size: 3rem;
+  line-height: 1.08;
+  font-weight: 800;
+}
+
+.library-panel {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  border-left: 1px solid var(--color-accent-secondary);
+  padding-left: clamp(1.5rem, 3vw, 3rem);
+}
+
+.library-top {
+  display: flex;
   align-items: center;
+  min-height: 2rem;
+  margin-bottom: 1rem;
+  padding: 0 1.25rem;
 }
 
-/* 标题卡片保持不同颜色 */
-.position-5 {
-  background-color: transparent; /* 透明背景，与标题卡片样式一致 */
+.library-count {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  opacity: 0.56;
+  text-transform: uppercase;
 }
 
-/* 对话框样式 */
+.book-grid {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1rem 1.25rem 1.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13.5rem, 16rem));
+  grid-auto-rows: 12.75rem;
+  align-content: start;
+  justify-content: start;
+  gap: 1.25rem;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.book-grid :deep(.word-book-card) {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--color-accent-secondary);
+  border-radius: 8px;
+  box-shadow: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.book-grid :deep(.word-book-card:hover) {
+  background: var(--color-accent-secondary);
+  border-color: var(--color-text-primary);
+  transform: translateY(-2px);
+}
+
+.book-grid :deep(.book-info) {
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.book-grid :deep(.book-title) {
+  color: var(--color-text-primary);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.book-grid :deep(.book-description),
+.book-grid :deep(.book-stats) {
+  color: var(--color-text-primary);
+  opacity: 0.68;
+}
+
+.book-grid :deep(.book-description) {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  max-height: 4.5rem;
+  margin: 0.75rem 0;
+}
+
+.book-grid :deep(.book-stats) {
+  justify-content: center;
+  font-size: 0.8125rem;
+}
+
+.book-grid :deep(.word-count::after) {
+  color: var(--color-text-primary);
+  opacity: 0.36;
+}
+
 .dialog-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  inset: 0;
   z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: transparent;
 }
 
 .dialog-content {
-  background-color: white;
-  border-radius: 12px;
-  padding: 2rem;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: min(100% - 2rem, 26rem);
+  padding: 1.5rem;
+  border: 1px solid var(--color-text-primary);
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .dialog-content h2 {
-  color: #000033;
-  margin-bottom: 1rem;
+  margin: 0 0 1rem;
   font-size: 1.5rem;
 }
 
 .dialog-content p {
-  color: #666;
-  margin-bottom: 2rem;
-  font-size: 1.1rem;
+  margin: 0 0 1.5rem;
+  opacity: 0.72;
 }
 
+.daily-count-input {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.count-control,
 .dialog-buttons {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
+.count-btn,
 .btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  min-height: 2.75rem;
+  border: 1px solid var(--color-text-primary);
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-confirm {
-  background-color: #000033;
-  color: white;
-}
-
-.btn-confirm:hover {
-  background-color: #000066;
-}
-
-.btn-cancel {
-  background-color: #f0f0f0;
-  color: #333;
-}
-
-.btn-cancel:hover {
-  background-color: #e0e0e0;
-}
-
-/* 每日学习量输入样式 */
-.daily-count-input {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 2rem 0;
-  gap: 1rem;
 }
 
 .count-btn {
-  width: 40px;
-  height: 40px;
-  background-color: #000033;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s ease;
-}
-
-.count-btn:hover {
-  background-color: #000066;
-  transform: scale(1.1);
+  width: 2.75rem;
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
 }
 
 .count-input {
-  width: 80px;
-  height: 40px;
+  width: 6rem;
+  border: 1px solid var(--color-accent-secondary);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: 700;
   text-align: center;
-  font-size: 1.2rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 0 0.5rem;
 }
 
 .count-input:focus {
   outline: none;
-  border-color: #000033;
+  border-color: var(--color-text-primary);
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
+.dialog-buttons {
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: 0 1rem;
+}
+
+.btn-confirm {
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 1120px) {
+  .book-selection {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+    align-content: start;
   }
 
-  .page-title-card {
-    border-width: 1px;
-    width: calc(50% - 0.5rem);
-    max-width: 150px;
+  .library-panel {
+    border-left: 0;
+    padding-left: 0;
   }
 
-  .page-title {
-    font-size: 1.5rem;
+  .book-grid {
+    grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+    overflow: visible;
+    padding: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .book-selection {
+    padding: 2rem 1rem;
   }
 
-  .page-subtitle {
-    font-size: 0.9rem;
-    padding: 0 0.5rem;
+  .book-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 12rem;
   }
 
-  .word-books-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    max-width: 100%;
-    justify-content: center;
-  }
-
-  .book-cover-placeholder {
-    width: 40px;
-    height: 40px;
-  }
-
-  .placeholder-icon {
-    font-size: 1rem;
-  }
-
-  .dialog-content {
-    padding: 1.5rem;
-    width: 95%;
-  }
-
-  .dialog-content h2 {
-    font-size: 1.3rem;
-  }
-
-  .dialog-content p {
-    font-size: 1rem;
-  }
-
-  .daily-count-input {
-    gap: 0.5rem;
-  }
-
-  .count-btn {
-    width: 35px;
-    height: 35px;
-    font-size: 1.2rem;
-  }
-
-  .count-input {
-    width: 70px;
-    height: 35px;
-    font-size: 1.1rem;
+  h1 {
+    font-size: 2.25rem;
   }
 }
 </style>

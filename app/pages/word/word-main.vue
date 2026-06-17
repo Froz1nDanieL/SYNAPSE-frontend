@@ -1,152 +1,68 @@
 <template>
-  <div class="word-main-container">
-    <div class="content-wrapper">
-      <div class="page-header">
-        <h1 class="page-title">单词学习</h1>
-        <p class="page-subtitle">开启你的英语学习之旅</p>
+  <main class="word-main">
+    <section class="overview">
+      <div class="overview-copy">
+        <p class="eyebrow">Word Study</p>
+        <h1>单词学习</h1>
+        <p class="subtitle">今天的学习节奏已经准备好。</p>
       </div>
 
-      <div class="checkin-section">
-        <div
-          class="checkin-button"
-          @click="handleCheckIn"
-          :class="{ checked: isCheckedIn }"
+      <button
+        class="checkin-button"
+        :class="{ checked: isCheckedIn }"
+        @click="handleCheckIn"
+      >
+        <span class="checkin-mark" aria-hidden="true">✓</span>
+        <span>{{ isCheckedIn ? "今日已签到" : "每日签到" }}</span>
+      </button>
+    </section>
+
+    <section class="study-grid">
+      <button
+        class="study-primary"
+        :class="{ 'is-pressed': pressedAction === 'memory' }"
+        @pointerdown="pressAction('memory')"
+        @pointerup="releaseAction"
+        @pointerleave="releaseAction"
+        @pointercancel="releaseAction"
+        @click="navigateToWordMemory"
+      >
+        <span class="action-label">开始记忆</span>
+        <span class="action-value">{{ newWordCount }}</span>
+        <span class="action-meta">今日新词</span>
+      </button>
+
+      <div class="study-secondary">
+        <button
+          class="study-action muted"
+          :class="{ 'is-pressed': pressedAction === 'review' }"
+          @pointerdown="pressAction('review')"
+          @pointerup="releaseAction"
+          @pointerleave="releaseAction"
+          @pointercancel="releaseAction"
+          @click="releaseAction"
         >
-          <div class="checkin-icon">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M8 12L11 15L16 9"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <span class="checkin-text">{{
-            isCheckedIn ? "今日已签到" : "每日签到"
-          }}</span>
-          <div class="checkin-ripple"></div>
-        </div>
+          <span class="action-label">复习单词</span>
+          <span class="action-value">{{ reviewWordCount }}</span>
+          <span class="action-meta">待复习</span>
+        </button>
+
+        <button
+          class="study-action"
+          :class="{ 'is-pressed': pressedAction === 'wordBook' }"
+          @pointerdown="pressAction('wordBook')"
+          @pointerup="releaseAction"
+          @pointerleave="releaseAction"
+          @pointercancel="releaseAction"
+          @click="navigateToWordBook"
+        >
+          <span class="action-label">生词本</span>
+          <span class="action-value">{{ collectedWordCount }}</span>
+          <span class="action-meta">已收藏</span>
+        </button>
       </div>
-
-      <div class="cards-row">
-        <div class="small-card" @click="navigateToWordMemory">
-          <div class="small-card-icon">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 2L2 7L12 12L22 7L12 2Z"
-                stroke="#282828"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M2 17L12 22L22 17"
-                stroke="#282828"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M2 12L12 17L22 12"
-                stroke="#282828"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <span class="small-card-title">背单词</span>
-          <span class="small-card-count">{{ newWordCount }}</span>
-        </div>
-
-        <div class="small-card disabled">
-          <div class="small-card-icon">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21 21H3V3H21V21Z"
-                stroke="#282828"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M9 9H15"
-                stroke="#282828"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M9 13H15"
-                stroke="#282828"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M9 17H13"
-                stroke="#282828"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <span class="small-card-title">复习单词</span>
-          <span class="small-card-count">{{ reviewWordCount }}</span>
-        </div>
-
-        <div class="small-card" @click="navigateToWordBook">
-          <div class="small-card-icon">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"
-                stroke="#282828"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <span class="small-card-title">生词本</span>
-          <span class="small-card-count">{{ collectedWordCount }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script setup>
@@ -164,7 +80,7 @@ useHead({
   meta: [
     {
       name: "description",
-      content: "单词学习主页 - 背单词、复习单词、签到、生词本",
+      content: "单词学习主页",
     },
   ],
 });
@@ -175,6 +91,7 @@ const newWordCount = ref(0);
 const reviewWordCount = ref(0);
 const collectedWordCount = ref(0);
 const isCheckedIn = ref(false);
+const pressedAction = ref("");
 
 onMounted(async () => {
   await fetchNewWordCount();
@@ -216,275 +133,215 @@ function handleCheckIn() {
   isCheckedIn.value = true;
 }
 
+function pressAction(action) {
+  pressedAction.value = action;
+}
+
+function releaseAction() {
+  pressedAction.value = "";
+}
+
 function navigateToWordMemory() {
+  releaseAction();
   router.push("/word/word-memory");
 }
 
 function navigateToWordBook() {
+  releaseAction();
   router.push("/word/word-book");
 }
 </script>
 
 <style scoped>
-.word-main-container {
+.word-main {
   height: 100vh;
-  background-color: var(--color-bg-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  box-sizing: border-box;
   overflow: hidden;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(520px, 1.2fr);
+  gap: 4rem;
+  align-items: center;
+  padding: 5rem 7vw;
 }
 
-.content-wrapper {
-  width: 100%;
-  max-width: 1000px;
-}
-
-.page-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #282828;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.5px;
-}
-
-.page-subtitle {
-  font-size: 1rem;
-  color: #282828;
-  opacity: 0.7;
-  margin: 0;
-}
-
-.checkin-section {
+.overview {
   display: flex;
-  justify-content: center;
-  margin-bottom: 3rem;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.overview-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.56;
+}
+
+h1 {
+  margin: 0;
+  font-size: 3.5rem;
+  line-height: 1.05;
+  font-weight: 800;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 24rem;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  opacity: 0.72;
 }
 
 .checkin-button {
-  position: relative;
-  background-color: #282828;
-  color: #f1efe9;
-  border: none;
-  border-radius: 50px;
-  padding: 1rem 3rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
+  width: fit-content;
+  min-height: 3rem;
+  display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-
-.checkin-button:hover:not(.checked) {
-  transform: scale(1.05);
-  background-color: #3a3a3a;
-}
-
-.checkin-button:active:not(.checked) {
-  transform: scale(0.98);
+  padding: 0 1.25rem;
+  border: 1px solid var(--color-text-primary);
+  border-radius: 6px;
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .checkin-button.checked {
-  background-color: #e2ded1;
-  color: #282828;
+  background: var(--color-accent-secondary);
+  color: var(--color-text-primary);
   cursor: default;
 }
 
-.checkin-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.checkin-button:hover .checkin-icon {
-  transform: rotate(360deg);
-}
-
-.checkin-button.checked .checkin-icon {
-  transform: scale(1.2);
-}
-
-.checkin-text {
-  transition: all 0.3s ease;
-}
-
-.checkin-ripple {
-  position: absolute;
+.checkin-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid currentColor;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.3);
-  transform: scale(0);
-  animation: ripple 0.6s ease-out;
-  pointer-events: none;
+  font-size: 0.8125rem;
 }
 
-@keyframes ripple {
-  to {
-    transform: scale(4);
-    opacity: 0;
-  }
+.study-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(260px, 0.8fr);
+  gap: 1rem;
+  align-items: stretch;
 }
 
-.cards-row {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  width: 100%;
-}
-
-.small-card {
-  background-color: #e2ded1;
-  border-radius: 16px;
-  padding: 1.5rem;
+.study-primary,
+.study-action {
+  border: 1px solid var(--color-accent-secondary);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-primary);
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  font: inherit;
+  text-align: left;
+  transition:
+    background-color 220ms ease-out,
+    border-color 220ms ease-out,
+    color 220ms ease-out;
+}
+
+.study-primary {
+  min-height: 22rem;
+  padding: 2rem;
+  display: grid;
+  align-content: end;
   gap: 0.75rem;
-  min-width: 120px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid transparent;
 }
 
-.small-card:hover {
-  border-color: #282828;
-  transform: translateY(-4px);
+.study-secondary {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
 }
 
-.small-card:active {
-  transform: translateY(-2px);
+.study-action {
+  min-height: 10.5rem;
+  padding: 1.5rem;
+  display: grid;
+  align-content: end;
+  gap: 0.5rem;
 }
 
-.small-card.disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+.study-primary:hover,
+.study-action:hover {
+  background: var(--color-accent-secondary);
 }
 
-.small-card.disabled:hover {
-  border-color: transparent;
-  transform: none;
+.study-primary.is-pressed,
+.study-action.is-pressed {
+  border-color: var(--color-text-primary);
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
 }
 
-.small-card-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s ease;
+.study-action.muted {
+  opacity: 0.52;
+  cursor: pointer;
 }
 
-.small-card:hover .small-card-icon {
-  transform: scale(1.1);
-}
-
-.small-card.disabled .small-card-icon {
-  opacity: 0.5;
-}
-
-.small-card-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  text-align: center;
-}
-
-.small-card-count {
-  font-size: 1.5rem;
+.action-label {
+  font-size: 1rem;
   font-weight: 700;
-  color: var(--color-text-primary);
-  line-height: 1;
 }
 
-@media (max-width: 768px) {
-  .word-main-container {
-    padding: 1rem;
+.action-value {
+  font-size: 4.5rem;
+  line-height: 0.95;
+  font-weight: 800;
+}
+
+.study-action .action-value {
+  font-size: 2.5rem;
+}
+
+.action-meta {
+  font-size: 0.875rem;
+  opacity: 0.64;
+}
+
+@media (max-width: 980px) {
+  .word-main {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding: 4rem 1.5rem;
+    overflow-y: auto;
+    align-content: start;
   }
 
-  .page-title {
-    font-size: 2rem;
+  .study-grid {
+    grid-template-columns: 1fr;
   }
 
-  .page-subtitle {
-    font-size: 0.875rem;
-  }
-
-  .checkin-button {
-    padding: 0.875rem 2.5rem;
-    font-size: 1rem;
-  }
-
-  .cards-row {
-    gap: 1rem;
-  }
-
-  .small-card {
-    padding: 1.25rem;
-    min-width: 100px;
-  }
-
-  .small-card-title {
-    font-size: 0.75rem;
-  }
-
-  .small-card-count {
-    font-size: 1.25rem;
+  .study-primary {
+    min-height: 16rem;
   }
 }
 
-@media (max-width: 480px) {
-  .page-header {
-    margin-bottom: 1.5rem;
+@media (max-width: 560px) {
+  .word-main {
+    padding: 3rem 1rem;
   }
 
-  .page-title {
-    font-size: 1.5rem;
+  h1 {
+    font-size: 2.5rem;
   }
 
-  .page-subtitle {
-    font-size: 0.75rem;
-  }
-
-  .checkin-section {
-    margin-bottom: 2rem;
-  }
-
-  .checkin-button {
-    padding: 0.75rem 2rem;
-    font-size: 0.875rem;
-  }
-
-  .checkin-icon svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .cards-row {
-    gap: 0.75rem;
-  }
-
-  .small-card {
-    padding: 1rem;
-    min-width: 85px;
-  }
-
-  .small-card-icon svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .small-card-title {
-    font-size: 0.6875rem;
-  }
-
-  .small-card-count {
-    font-size: 1.125rem;
+  .study-secondary {
+    grid-template-rows: none;
   }
 }
 </style>

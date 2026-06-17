@@ -7,7 +7,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return;
   }
 
-  const loginUserStore = useLoginUserStore();
+  const nuxtApp = useNuxtApp();
+  const loginUserStore = useLoginUserStore(nuxtApp.$pinia);
 
   // 先检查localStorage中是否有登录状态
   if (loginUserStore.loginUser.userName === "未登录") {

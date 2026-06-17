@@ -9,6 +9,7 @@ import * as learnPlanController from "./learnPlanController";
 import * as engdictController from "./engdictController";
 import * as articleController from "./articleController";
 import * as testController from "./testController";
+import * as essayCorrectionController from "./essayCorrectionController";
 export default {
   wordLearnController,
   userController,
@@ -17,4 +18,5 @@ export default {
   engdictController,
   articleController,
   testController,
+  essayCorrectionController,
 };

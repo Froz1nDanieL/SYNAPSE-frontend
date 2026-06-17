@@ -1,327 +1,274 @@
 <template>
-  <div class="sidebar-container">
-    <!-- 灵动岛风格侧边栏 -->
-    <div class="sidebar" :class="{ 'sidebar-expanded': isExpanded }">
-      <!-- Logo 和切换按钮容器 -->
-      <div class="sidebar-header">
-        <!-- Logo 占位符 -->
-        <div class="sidebar-logo">
-          <img src="~/assets/img/logo.png" alt="Logo" class="logo-image" />
-        </div>
+  <div class="sidebar-root">
+    <button
+      class="logo-trigger"
+      type="button"
+      :aria-expanded="isExpanded"
+      aria-controls="app-sidebar"
+      aria-label="切换侧边栏"
+      @click="toggleSidebar"
+    >
+      <img src="~/assets/img/logo.png" alt="MS-EN" class="logo-mark" />
+    </button>
 
-        <!-- 切换按钮 -->
+    <button
+      class="sidebar-overlay"
+      :class="{ 'sidebar-overlay--visible': isExpanded }"
+      type="button"
+      :aria-hidden="!isExpanded"
+      aria-label="收起侧边栏"
+      :tabindex="isExpanded ? 0 : -1"
+      @click="closeSidebar"
+    />
+
+    <aside
+      id="app-sidebar"
+      class="sidebar-panel"
+      :class="{ 'sidebar-panel--expanded': isExpanded }"
+    >
+      <div class="sidebar-content">
+        <div class="sidebar-spacer" />
+
+        <nav class="sidebar-nav" aria-label="主导航">
+          <NuxtLink
+            v-for="item in navItems"
+            :key="item.to"
+            :to="item.to"
+            class="nav-link"
+            @click="closeSidebar"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </nav>
+
         <button
-          class="sidebar-toggle"
-          @click="toggleSidebar"
-          aria-label="切换侧边栏"
+          class="user-entry"
+          type="button"
+          aria-label="用户中心"
+          @click="handleUserIconClick"
         >
-          <RightOutlined />
+          <UserIcon v-if="!isLogin" />
+          <UserAvatar v-else :user="loginUserStore.loginUser" />
         </button>
       </div>
-
-      <!-- 导航菜单 -->
-      <nav class="sidebar-nav">
-        <ul>
-          <li class="nav-item">
-            <NuxtLink to="/word/word-main" class="nav-link">单词记忆</NuxtLink>
-          </li>
-          <li class="nav-item">
-            <NuxtLink to="/article/article-main" class="nav-link"
-              >文章主页</NuxtLink
-            >
-          </li>
-          <li class="nav-item">
-            <NuxtLink to="/translation/translation-text" class="nav-link"
-              >翻译页面</NuxtLink
-            >
-          </li>
-          <li class="nav-item">
-            <NuxtLink to="/writing-correction" class="nav-link"
-              >写作批改</NuxtLink
-            >
-          </li>
-        </ul>
-      </nav>
-
-      <!-- 用户头像/登录图标 -->
-      <div class="sidebar-user">
-        <UserIcon
-          v-if="!isLogin"
-          class="user-avatar"
-          @click="handleUserIconClick"
-        />
-        <UserAvatar
-          v-else
-          :user="loginUserStore.loginUser"
-          class="user-avatar"
-          @click="handleUserIconClick"
-        />
-      </div>
-    </div>
+    </aside>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { RightOutlined } from "@ant-design/icons-vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useLoginUserStore } from "~/stores/userLoginUserStore";
-import UserIcon from "./UserIcon.vue";
 import UserAvatar from "./UserAvatar.vue";
+import UserIcon from "./UserIcon.vue";
 
-// 侧边栏展开状态
+const navItems = [
+  { label: "单词记忆", to: "/word/word-main" },
+  { label: "文章阅读", to: "/article/article-main" },
+  { label: "翻译工作台", to: "/translation/translation-text" },
+  { label: "写作批改", to: "/writing/writing-main" },
+];
+
 const isExpanded = ref(false);
 const router = useRouter();
 const loginUserStore = useLoginUserStore();
 
-// 判断是否登录（简单判断用户名不为"未登录"）
 const isLogin = computed(() => {
-  return loginUserStore.loginUser.userName !== "未登录";
+  return Boolean(
+    loginUserStore.loginUser?.userName &&
+      loginUserStore.loginUser.userName !== "未登录",
+  );
 });
 
-// 切换侧边栏展开状态
-const toggleSidebar = () => {
+function toggleSidebar() {
   isExpanded.value = !isExpanded.value;
-};
+}
 
-// 处理用户图标点击事件
+function closeSidebar() {
+  isExpanded.value = false;
+}
+
 function handleUserIconClick() {
+  closeSidebar();
+
   if (isLogin.value) {
-    // 如果已经登录，跳转到个人资料页面
     router.push("/user/profile");
-  } else {
-    router.push("/user/login");
+    return;
   }
+
+  router.push("/user/login");
 }
 </script>
 
 <style scoped>
-/* 侧边栏容器 */
-.sidebar-container {
+.sidebar-root {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  inset: 0 auto auto 0;
   z-index: 1000;
+  pointer-events: none;
 }
 
-/* 基础侧边栏样式 */
-.sidebar {
-  position: relative;
-  display: block;
-  width: 120px;
-  height: 60px;
-  background-color: #f6f6f6;
-  border-radius: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 0 15px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-
-/* 展开状态 */
-.sidebar-expanded {
-  width: 220px;
-  height: auto;
-  border-radius: 20px;
-  padding: 20px;
-}
-
-/* Logo 和切换按钮容器 */
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 60px;
-  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 展开状态下header高度调整 */
-.sidebar-expanded .sidebar-header {
-  height: auto;
-  margin-bottom: 10px;
-}
-
-/* Logo 占位符 */
-.sidebar-logo {
-  display: flex;
+.logo-trigger {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1002;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    color 180ms ease-out;
 }
 
-.logo-image {
-  margin-left: 0.5rem;
-  width: 2rem;
+.logo-trigger:hover {
+  color: #141414;
+}
+
+.logo-mark {
+  display: block;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
+  transition: transform 180ms ease-out;
 }
 
-/* 导航菜单 */
-.sidebar-nav {
-  width: 100%;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-  margin-top: 20px;
+.logo-trigger:hover .logo-mark {
+  transform: scale(1.08);
 }
 
-.sidebar-expanded .sidebar-nav {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.sidebar-nav ul {
-  list-style: none;
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
   padding: 0;
-  margin: 0;
-  width: 100%;
+  border: none;
+  background: rgba(15, 15, 15, 0.36);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease-out;
 }
 
-.nav-item {
-  margin-bottom: 16px;
+.sidebar-overlay--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebar-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  width: 260px;
+  height: 100vh;
+  background: rgba(250, 249, 245, 0.98);
+  border-right: 1px solid rgba(40, 40, 40, 0.1);
+  transform: translateX(-100%);
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: auto;
+}
+
+.sidebar-panel--expanded {
+  transform: translateX(0);
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 88px 16px 20px;
+}
+
+.sidebar-spacer {
+  height: 8px;
+  flex: 0 0 auto;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .nav-link {
-  display: block;
-  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 8px;
   color: var(--color-text-primary);
-  text-decoration: none;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.3;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out;
 }
 
-.nav-link:hover {
-  background-color: var(--color-accent-secondary);
-  transform: translateX(5px);
+.nav-link:hover,
+.nav-link.router-link-active {
+  background: #eeeae0;
+  color: #171717;
 }
 
-/* 切换按钮 */
-.sidebar-toggle {
-  margin-left: auto;
-  width: 36px;
-  height: 36px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
+.user-entry {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.sidebar-toggle:hover {
-  transform: scale(1.05);
-}
-
-/* 箭头图标翻转效果 */
-.sidebar-toggle .anticon {
-  transition: transform 0.3s ease;
-  font-size: 18px;
-  color: #333;
-}
-
-.sidebar-expanded .sidebar-toggle .anticon {
-  transform: rotate(180deg);
-}
-
-/* 用户头像/登录图标 */
-.sidebar-user {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-}
-
-.sidebar-expanded .sidebar-user {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  margin-top: auto;
+  border: 1px solid rgba(40, 40, 40, 0.1);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out;
 }
 
-.user-avatar:hover {
-  transform: scale(1.1);
+.user-entry:hover {
+  border-color: rgba(40, 40, 40, 0.18);
+  background: #eeeae0;
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .sidebar-container {
-    top: 15px;
-    left: 15px;
-  }
+.user-entry :deep(.user-icon),
+.user-entry :deep(.user-avatar) {
+  width: 32px;
+  height: 32px;
+  transform: none;
+}
 
-  .sidebar {
-    width: 110px;
-    height: 55px;
-  }
-
-  .sidebar-header {
-    height: 55px;
-  }
-
-  .sidebar-expanded {
-    width: 200px;
-    height: auto;
-  }
-
-  .logo-placeholder {
-    width: 32px;
-    height: 32px;
-  }
-
-  .sidebar-toggle {
-    width: 32px;
-    height: 32px;
-  }
-
-  .nav-link {
-    font-size: 13px;
-    padding: 8px 12px;
-  }
+.user-entry :deep(.user-icon:hover),
+.user-entry :deep(.user-avatar:hover) {
+  transform: none;
 }
 
 @media (max-width: 480px) {
-  .sidebar {
-    width: 100px;
-    height: 50px;
+  .logo-trigger {
+    top: 12px;
+    left: 12px;
+    width: 48px;
+    height: 48px;
   }
 
-  .sidebar-header {
-    height: 50px;
+  .sidebar-panel {
+    width: 240px;
   }
 
-  .sidebar-expanded {
-    width: 180px;
-    height: auto;
-  }
-
-  .logo-image {
-    width: 28px;
-    height: 28px;
-  }
-
-  .sidebar-toggle {
-    width: 28px;
-    height: 28px;
-  }
-
-  .nav-link {
-    font-size: 12px;
+  .sidebar-content {
+    padding: 80px 14px 18px;
   }
 }
 </style>
